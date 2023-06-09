@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pet_sitting_project/Widgets/pages/page_petsitter_profile.dart';
 import 'package:pet_sitting_project/Widgets/pages/page_qrcode.dart';
 import 'package:pet_sitting_project/Widgets/pages/page_request_details.dart';
+import 'package:pet_sitting_project/Widgets/pages/page_tour.dart';
 import 'package:pet_sitting_project/constants/constant_routes.dart';
 import 'package:pet_sitting_project/widgets/pages/page_profile.dart';
 import 'package:pet_sitting_project/Widgets/pages/page_sign_up2.dart';
@@ -53,7 +54,8 @@ class App extends StatelessWidget {
               index: 1,
             ),
         ConstantRoutes.requestDetails:(context) => const PageRequestDetails(),
-        ConstantRoutes.qrCode: (context) => const PageQrCode()
+        ConstantRoutes.qrCode: (context) => const PageQrCode(),
+        ConstantRoutes.tour: (context) => const PageTour()
       },
     );
   }

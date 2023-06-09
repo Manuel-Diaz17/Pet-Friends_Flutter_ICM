@@ -11,4 +11,5 @@ class ConstantRoutes {
   static const petSitterProfile = '/petSitterProfile';
   static const requestDetails = '/requestDetails';
   static const qrCode = '/qrCode';
+  static const tour = '/tour';
 }

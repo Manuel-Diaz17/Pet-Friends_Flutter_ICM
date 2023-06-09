@@ -18,20 +18,27 @@ class _OrganismQrCodeState extends State<OrganismQrCode> {
     String code = await FlutterBarcodeScanner.scanBarcode("#FFFFFF", "cancel", false, ScanMode.QR);
 
     setState(() => ticket = code != '-1' ? code : 'Not validated');
+
   }
 
   @override
   Widget build(BuildContext context) {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         if (ticket != '')
-          Padding(padding: EdgeInsets.only(bottom: 24.0),
-          child: Text('Ticket: $ticket',
-          style: TextStyle(fontSize: 20),
-           ),
+          Padding(
+            padding: EdgeInsets.only(bottom: 24.0),
+            child: Text(
+              'Ticket: $ticket',
+              style: TextStyle(fontSize: 20),
+
+            ),
           ),
+        Text("Validate the Pet Code",
+          style: TextStyle(fontSize: 20),
+        ),
+        
+        SizedBox(height: 10),
         ElevatedButton.icon(onPressed: readQrCode, icon: Icon(Icons.qr_code), label: Text('Validate')),
       ],
     );
