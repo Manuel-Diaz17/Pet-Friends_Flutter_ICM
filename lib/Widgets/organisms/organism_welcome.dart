@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pet_sitting_project/Constants/constants_colors.dart';
 import 'package:pet_sitting_project/Widgets/atoms/Button.dart';
 import 'package:pet_sitting_project/constants/constant_routes.dart';
+import 'package:pet_sitting_project/isar_service.dart';
 
 class OrganismWelcome extends StatefulWidget {
   const OrganismWelcome({super.key});
@@ -11,6 +12,7 @@ class OrganismWelcome extends StatefulWidget {
 }
 
 class _OrganismWelcomeState extends State<OrganismWelcome> {
+  final service = IsarService();
   @override
   Widget build(BuildContext context) {
     return Column(

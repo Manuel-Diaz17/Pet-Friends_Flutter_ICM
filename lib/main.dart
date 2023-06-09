@@ -18,11 +18,16 @@ import 'package:pet_sitting_project/Widgets/atoms/SettingsBloc.dart';
 import 'package:pet_sitting_project/Widgets/atoms/CartBloc.dart';
 
 void main() {
-  runApp(MultiBlocProvider(providers: [
-    BlocProvider<SettingsBloc>(
-        create: (BuildContext context) => SettingsBloc()),
-    BlocProvider<CartBloc>(create: (BuildContext context) => CartBloc()),
-  ], child: MaterialApp(home: App())));
+  runApp(MultiBlocProvider(
+      providers: [
+        BlocProvider<SettingsBloc>(
+            create: (BuildContext context) => SettingsBloc()),
+        BlocProvider<CartBloc>(create: (BuildContext context) => CartBloc()),
+      ],
+      child: const MaterialApp(
+          title: 'PetSitting',
+          debugShowCheckedModeBanner: false,
+          home: App())));
 }
 
 class App extends StatelessWidget {
