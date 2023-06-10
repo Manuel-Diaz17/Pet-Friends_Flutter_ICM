@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:bloc/bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pet_sitting_project/Widgets/pages/page_petsitter_profile.dart';
+import 'package:pet_sitting_project/bloc/userBloc.dart';
 import 'package:pet_sitting_project/Widgets/pages/page_qrcode.dart';
 import 'package:pet_sitting_project/Widgets/pages/page_request_details.dart';
 import 'package:pet_sitting_project/Widgets/pages/page_tour.dart';
@@ -24,6 +25,7 @@ void main() {
         BlocProvider<SettingsBloc>(
             create: (BuildContext context) => SettingsBloc()),
         BlocProvider<CartBloc>(create: (BuildContext context) => CartBloc()),
+        BlocProvider(create: (BuildContext context) => UserBloc()),
       ],
       child: const MaterialApp(
           title: 'PetSitting',
@@ -53,7 +55,7 @@ class App extends StatelessWidget {
         ConstantRoutes.petSitters: (context) => const TemplatePlatform(
               index: 1,
             ),
-        ConstantRoutes.requestDetails:(context) => const PageRequestDetails(),
+        ConstantRoutes.requestDetails: (context) => const PageRequestDetails(),
         ConstantRoutes.qrCode: (context) => const PageQrCode(),
         ConstantRoutes.tour: (context) => const PageTour()
       },

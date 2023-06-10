@@ -15,9 +15,16 @@ class IsarService {
     isar.writeTxnSync<int>(() => isar.pets.putSync(newPet));
   }
 
-  Future<void> savePetsitter(Petsitter newPetsitter) async {
+  Future<Id> savePetsitter(Petsitter newPetsitter) async {
     final isar = await db;
     isar.writeTxnSync<int>(() => isar.petsitters.putSync(newPetsitter));
+    return newPetsitter.id;
+  }
+
+  Future<Petsitter?> getPetsitterById(Id id) async {
+    final isar = await db;
+    final petsitter = isar.petsitters.filter().idEqualTo(id).findFirst();
+    return petsitter;
   }
 
   Future<void> cleanDb() async {
