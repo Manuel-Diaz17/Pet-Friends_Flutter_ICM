@@ -53,7 +53,7 @@ class _OrganismRequestsDetailsState extends State<OrganismRequestsDetails> {
         
         SizedBox(height: 50),
         Text(
-          'Pet Sitter: John Murphy',
+          'Owner: John Murphy',
           style: TextStyle(fontSize: 18),
         ),
         SizedBox(height: 18),
