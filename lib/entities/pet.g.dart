@@ -49,7 +49,15 @@ const PetSchema = CollectionSchema(
   deserializeProp: _petDeserializeProp,
   idName: r'id',
   indexes: {},
-  links: {},
+  links: {
+    r'petsitter': LinkSchema(
+      id: -1620140317447872327,
+      name: r'petsitter',
+      target: r'Petsitter',
+      single: true,
+      linkName: r'pet',
+    )
+  },
   embeddedSchemas: {},
   getId: _petGetId,
   getLinks: _petGetLinks,
@@ -126,11 +134,13 @@ Id _petGetId(Pet object) {
 }
 
 List<IsarLinkBase<dynamic>> _petGetLinks(Pet object) {
-  return [];
+  return [object.petsitter];
 }
 
 void _petAttach(IsarCollection<dynamic> col, Id id, Pet object) {
   object.id = id;
+  object.petsitter
+      .attach(col, col.isar.collection<Petsitter>(), r'petsitter', id);
 }
 
 extension PetQueryWhereSort on QueryBuilder<Pet, Pet, QWhere> {
@@ -829,7 +839,20 @@ extension PetQueryFilter on QueryBuilder<Pet, Pet, QFilterCondition> {
 
 extension PetQueryObject on QueryBuilder<Pet, Pet, QFilterCondition> {}
 
-extension PetQueryLinks on QueryBuilder<Pet, Pet, QFilterCondition> {}
+extension PetQueryLinks on QueryBuilder<Pet, Pet, QFilterCondition> {
+  QueryBuilder<Pet, Pet, QAfterFilterCondition> petsitter(
+      FilterQuery<Petsitter> q) {
+    return QueryBuilder.apply(this, (query) {
+      return query.link(q, r'petsitter');
+    });
+  }
+
+  QueryBuilder<Pet, Pet, QAfterFilterCondition> petsitterIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(r'petsitter', 0, true, 0, true);
+    });
+  }
+}
 
 extension PetQuerySortBy on QueryBuilder<Pet, Pet, QSortBy> {
   QueryBuilder<Pet, Pet, QAfterSortBy> sortByAge() {

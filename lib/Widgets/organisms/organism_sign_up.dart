@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:isar/isar.dart';
 import 'package:pet_sitting_project/Constants/constant_routes.dart';
 import 'package:pet_sitting_project/Constants/constants_colors.dart';
 import 'package:pet_sitting_project/Widgets/atoms/SettingsBloc.dart';
+import 'package:pet_sitting_project/bloc/userBloc.dart';
+import 'package:pet_sitting_project/entities/petsitter.dart';
+import 'package:pet_sitting_project/isar_service.dart';
 import 'package:pet_sitting_project/widgets/atoms/button.dart';
 import 'package:pet_sitting_project/widgets/atoms/input.dart';
 import 'package:intl/intl.dart';
@@ -18,13 +22,22 @@ class _OrganismSignUpState extends State<OrganismSignUp> {
   DateTime? _selectedDate;
   final DateFormat formatter = DateFormat('yyyy-MM-dd');
   String? _selectedRole;
-  String? fName;
-  String? lName;
+  late String fName;
+  late String lName;
+  late String username;
+  late String pass;
+  late String cc;
+  final service = IsarService();
 
   void _changeName(s) {
     SettingsBloc bloc = BlocProvider.of<SettingsBloc>(context);
 
     setState(() => bloc.add(ChangeName(s)));
+  }
+
+  void _changeUser(int id) {
+    UserBloc bloc = BlocProvider.of<UserBloc>(context);
+    setState(() => bloc.add(ChangeUser(id)));
   }
 
   @override
@@ -102,12 +115,16 @@ class _OrganismSignUpState extends State<OrganismSignUp> {
       runSpacing: 10,
       children: [
         Input(
-          onValueChanged: (s) {},
+          onValueChanged: (s) {
+            username = s;
+          },
           hintText: 'Username',
           keyboardType: TextInputType.name,
         ),
         Input(
-          onValueChanged: (s) {},
+          onValueChanged: (s) {
+            pass = s;
+          },
           hintText: 'Password',
           keyboardType: TextInputType.visiblePassword,
         ),
@@ -133,9 +150,7 @@ class _OrganismSignUpState extends State<OrganismSignUp> {
             ),
             Expanded(
               child: Input(
-                onValueChanged: (s) {
-                  lName = s;
-                },
+                onValueChanged: (s) => lName = s,
                 hintText: 'Last Name',
                 keyboardType: TextInputType.name,
                 width: double.infinity / 4,
@@ -161,7 +176,7 @@ class _OrganismSignUpState extends State<OrganismSignUp> {
             const SizedBox(width: 10),
             Expanded(
               child: Input(
-                onValueChanged: (s) {},
+                onValueChanged: (s) => cc = s,
                 hintText: 'ID/Passport',
                 keyboardType: TextInputType.name,
               ),
@@ -217,10 +232,21 @@ class _OrganismSignUpState extends State<OrganismSignUp> {
         width: 80,
         height: 40,
         fontSize: 16,
-        onTap: () {
+        onTap: () async {
           if (_selectedRole == "pet_owner") {
             Navigator.pushNamed(context, ConstantRoutes.signUp2);
             _changeName('$fName $lName');
+
+            int id = await service.savePetsitter(
+              Petsitter()
+                ..fname = fName
+                ..lname = lName
+                ..username = username
+                ..pass = pass
+                ..birthDate = _selectedDate!
+                ..cc = cc,
+            );
+            _changeUser(id);
           }
         },
       ),

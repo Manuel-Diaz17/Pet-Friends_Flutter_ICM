@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:bloc/bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pet_sitting_project/Widgets/pages/page_petsitter_profile.dart';
+import 'package:pet_sitting_project/bloc/userBloc.dart';
 import 'package:pet_sitting_project/widgets/pages/page_profile.dart';
 import 'package:pet_sitting_project/Widgets/pages/page_sign_up2.dart';
 import 'package:pet_sitting_project/constants/constant_routes.dart';
@@ -21,6 +22,7 @@ void main() {
         BlocProvider<SettingsBloc>(
             create: (BuildContext context) => SettingsBloc()),
         BlocProvider<CartBloc>(create: (BuildContext context) => CartBloc()),
+        BlocProvider(create: (BuildContext context) => UserBloc()),
       ],
       child: const MaterialApp(
           title: 'PetSitting',
