@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pet_sitting_project/bloc/userBloc.dart';
 import 'package:pet_sitting_project/constants/constant_routes.dart';
 import 'package:pet_sitting_project/constants/constant_user_info.dart';
 import 'package:pet_sitting_project/constants/constants_colors.dart';
+import 'package:pet_sitting_project/isar_service.dart';
 import 'package:pet_sitting_project/widgets/atoms/button.dart';
 import 'package:pet_sitting_project/widgets/atoms/input.dart';
 
@@ -16,9 +19,15 @@ class _OrganismSignInState extends State<OrganismSignIn> {
   final _space = const SizedBox(
     height: 30,
   );
+  final service = IsarService();
   String _userName = '';
   String _password = '';
   String _feedbackMessage = '';
+
+  void _changeUser(int id) {
+    UserBloc bloc = BlocProvider.of<UserBloc>(context);
+    setState(() => bloc.add(ChangeUser(id)));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -84,21 +93,19 @@ class _OrganismSignInState extends State<OrganismSignIn> {
     );
   }
 
-  _logIn() {
-    if (_userName == ConstantUserInfo.username &&
-        _password == ConstantUserInfo.password) {
-      Navigator.pushNamed(context, ConstantRoutes.logged);
-    } else if (_userName.isEmpty) {
+  _logIn() async {
+    if (_userName.isEmpty) {
       setState(() => _feedbackMessage = 'Please insert your username');
     } else if (_password.isEmpty) {
       setState(() => _feedbackMessage = 'Please insert your password');
     } else {
-      setState(() => _feedbackMessage = 'Incorrect username or password');
+      int id = await service.getlogin(_userName, _password);
+      if (id != 0) {
+        _changeUser(id);
+        Navigator.pushNamed(context, ConstantRoutes.logged);
+      } else {
+        setState(() => _feedbackMessage = 'Incorrect username or password');
+      }
     }
-    if (_password.isEmpty) {
-      return print('please, insert your password');
-    }
-
-    return print('Username or password wrong');
   }
 }
