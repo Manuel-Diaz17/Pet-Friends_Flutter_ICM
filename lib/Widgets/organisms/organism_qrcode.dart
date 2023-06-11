@@ -17,7 +17,27 @@ class _OrganismQrCodeState extends State<OrganismQrCode> {
   readQrCode() async{
     String code = await FlutterBarcodeScanner.scanBarcode("#FFFFFF", "cancel", false, ScanMode.QR);
 
-    setState(() => ticket = code != '-1' ? code : 'Not validated');
+    setState(() {
+      if (code != '-1') {
+        // Assuming the QR code format is "PET_CODE:PET_NAME" (e.g., "12345:Max")
+        List<String> qrCodeData = code.split(':');
+        if (qrCodeData.length == 2) {
+          String petCode = qrCodeData[0];
+          String petName = qrCodeData[1];
+          // TODO: Validate the pet data against your database or predefined list
+          // Example validation logic:
+          if (petCode == '12345' && petName == 'Max') {
+            ticket = 'Validated: $petCode:$petName';
+          } else {
+            ticket = 'Invalid pet data';
+          }
+        } else {
+          ticket = 'Invalid QR code format';
+        }
+      } else {
+        ticket = 'Not validated';
+      }
+    });
 
   }
 
@@ -25,20 +45,33 @@ class _OrganismQrCodeState extends State<OrganismQrCode> {
   Widget build(BuildContext context) {
     return Column(
       children: [
+        SizedBox(height: 10,),
+        Center( 
+          child: Text(
+            "Validate the Pet Code",
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold
+            ),
+          ),
+        ),
+        SizedBox(height: 20),
+        Image.asset(
+          'assets/images/pet_qrcode.png',
+          height: 400,
+          width: MediaQuery.of(context).size.width
+        ),
+        SizedBox(height: 100,),
         if (ticket != '')
           Padding(
-            padding: EdgeInsets.only(bottom: 24.0),
+            padding: EdgeInsets.only(bottom: 14.0),
             child: Text(
               'Ticket: $ticket',
-              style: TextStyle(fontSize: 20),
+              style: TextStyle(fontSize: 15),
 
             ),
           ),
-        Text("Validate the Pet Code",
-          style: TextStyle(fontSize: 20),
-        ),
         
-        SizedBox(height: 10),
         ElevatedButton.icon(onPressed: readQrCode, icon: Icon(Icons.qr_code), label: Text('Validate')),
       ],
     );

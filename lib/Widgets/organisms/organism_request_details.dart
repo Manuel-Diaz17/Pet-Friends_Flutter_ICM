@@ -53,12 +53,17 @@ class _OrganismRequestsDetailsState extends State<OrganismRequestsDetails> {
         
         SizedBox(height: 50),
         Text(
-          'Owner: John Murphy',
+          'Service Code: 12345',
           style: TextStyle(fontSize: 18),
         ),
         SizedBox(height: 18),
         Text(
-          'Service time: 1 hour',
+          'Time: 1 hour',
+          style: TextStyle(fontSize: 18),
+        ),
+        SizedBox(height: 18),
+        Text(
+          'Owner: John Murphy',
           style: TextStyle(fontSize: 18),
         ),
         SizedBox(height: 18),
@@ -66,7 +71,7 @@ class _OrganismRequestsDetailsState extends State<OrganismRequestsDetails> {
           'Location: Aveiro',
           style: TextStyle(fontSize: 18),
         ),
-        SizedBox(height: 290),
+        SizedBox(height: 250),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
