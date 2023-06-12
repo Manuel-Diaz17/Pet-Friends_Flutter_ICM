@@ -9,11 +9,6 @@ class PageTour extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(child: OrganismTour()),
-      appBar: AppBar(
-        title: const Text(""),
-        centerTitle: true,
-        backgroundColor: ConstantColors.primary,
-      ),
     );
   }
 }

@@ -3,11 +3,14 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
-import 'package:pedometer/pedometer.dart';
+import 'package:logger/logger.dart';
 import 'package:pet_sitting_project/Constants/constant_routes.dart';
+import 'dart:math';
+
+import 'package:pet_sitting_project/Constants/constants_colors.dart';
 
 class OrganismTour extends StatefulWidget {
-  const OrganismTour({super.key});
+  const OrganismTour({Key? key}) : super(key: key);
 
   @override
   State<OrganismTour> createState() => _OrganismTourState();
@@ -16,19 +19,25 @@ class OrganismTour extends StatefulWidget {
 class _OrganismTourState extends State<OrganismTour> {
   final Completer<GoogleMapController> _controller = Completer();
 
-  //static const LatLng currentLocation1 = LatLng(37.33500926, -122.03272188);
+  final log = Logger();
 
   LocationData? currentLocation;
 
   BitmapDescriptor currentLocationIcon = BitmapDescriptor.defaultMarker;
 
-  void getCurrentLocation() async{
+  double totalDistance = 0.0;
+  LatLng? previousLatLng;
+
+  Timer? _timer;
+  int _secondsRemaining = 3600; // 1 hour in seconds
+
+  void getCurrentLocation() async {
     Location location = Location();
 
     location.getLocation().then(
       (location) {
         currentLocation = location;
-      }, 
+      },
     );
 
     GoogleMapController googleMapController = await _controller.future;
@@ -39,21 +48,136 @@ class _OrganismTourState extends State<OrganismTour> {
       googleMapController.animateCamera(
         CameraUpdate.newCameraPosition(
           CameraPosition(
-            zoom: 16,
+            zoom: 18,
             target: LatLng(
-            newLoc.latitude!, 
-            newLoc.longitude!,))));
+              newLoc.latitude!,
+              newLoc.longitude!,
+            ),
+          ),
+        ),
+      );
+
+      if (previousLatLng != null) {
+          double distanceInMeters = calculateDistance(
+            previousLatLng!,
+            LatLng(newLoc.latitude!, newLoc.longitude!),
+          );
+          totalDistance += distanceInMeters;
+        }
+
+      previousLatLng = LatLng(newLoc.latitude!, newLoc.longitude!);
+      //log.i(previousLatLng);
 
       setState(() {});
-     }
-    );
-
+    });
   }
 
-  void setCustomMarkerIcon(){
+  void setCustomMarkerIcon() {
     BitmapDescriptor.fromAssetImage(
-      ImageConfiguration.empty, "assets/images/pet_icon.png")
-      .then((icon) => currentLocationIcon = icon);
+      ImageConfiguration.empty,
+      "assets/images/pet_icon.png",
+    ).then((icon) => currentLocationIcon = icon);
+  }
+
+  double calculateDistance(LatLng startLatLng, LatLng endLatLng) {
+    const int earthRadius = 6371000; // in meters
+
+    double lat1 = startLatLng.latitude;
+    double lon1 = startLatLng.longitude;
+    double lat2 = endLatLng.latitude;
+    double lon2 = endLatLng.longitude;
+
+    double dLat = _toRadians(lat2 - lat1);
+    double dLon = _toRadians(lon2 - lon1);
+
+    double a = sin(dLat / 2) * sin(dLat / 2) +
+        cos(_toRadians(lat1)) *
+            cos(_toRadians(lat2)) *
+            sin(dLon / 2) *
+            sin(dLon / 2);
+
+    double c = 2 * atan2(sqrt(a), sqrt(1 - a));
+
+    double distance = earthRadius * c;
+    return distance / 1000;
+  }
+
+  double _toRadians(double degree) {
+    return degree * (pi / 180);
+  }
+
+  void startTimer() {
+    const oneSecond = Duration(seconds: 1);
+    _timer = Timer.periodic(oneSecond, (Timer timer) {
+      setState(() {
+        if (_secondsRemaining > 0) {
+          _secondsRemaining--;
+        } else {
+          timer.cancel();
+          showSummaryDialog();
+          Navigator.pushNamed(context, ConstantRoutes.logged);
+        }
+      });
+    });
+  }
+
+  String formatTime(int seconds) {
+    final minutes = (seconds / 60).floor();
+    final remainingSeconds = seconds % 60;
+    return '$minutes:${remainingSeconds.toString().padLeft(2, '0')}';
+  }
+
+  Future<bool?> showConfirmationDialog() {
+    return showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Confirmation'),
+          content: const Text('Are you sure you want to finish the tour?'),
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop(true); // Return true when OK is pressed
+              },
+              child: const Text('Ok'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop(false); // Return false when Cancel is pressed
+              },
+              child: const Text('Cancel'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> showSummaryDialog() async {
+    await showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Summary'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('Distance: ${totalDistance.toStringAsFixed(3)} km'),
+              const SizedBox(height: 10),
+              Text('Time Remaining: ${formatTime(_secondsRemaining)}'),
+            ],
+          ),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -61,56 +185,97 @@ class _OrganismTourState extends State<OrganismTour> {
     super.initState();
     getCurrentLocation();
     setCustomMarkerIcon();
-    
+    startTimer();
   }
 
   @override
   void dispose() {
     super.dispose();
+    _timer?.cancel();
   }
 
   @override
   Widget build(BuildContext context) {
     if (currentLocation == null)
-      return Center(child: CircularProgressIndicator(),);
+      return Center(
+        child: CircularProgressIndicator(),
+      );
 
     return Column(
       children: [
         Container(
-          height: 600,
+          height: 650,
           width: MediaQuery.of(context).size.width,
           child: GoogleMap(
             initialCameraPosition: CameraPosition(
-              target: LatLng(currentLocation!.latitude!, currentLocation!.longitude!),
-              //target: currentLocation1,
-              zoom: 16,
+              target: LatLng(
+                currentLocation!.latitude!,
+                currentLocation!.longitude!,
+              ),
+              zoom: 18,
             ),
             markers: {
               Marker(
                 markerId: MarkerId("currentLocation"),
                 icon: currentLocationIcon,
-                position: LatLng(currentLocation!.latitude!, currentLocation!.longitude!),
-                //position: currentLocation1
+                position: LatLng(
+                  currentLocation!.latitude!,
+                  currentLocation!.longitude!,
+                ),
               )
             },
-            onMapCreated: (mapController){
+            onMapCreated: (mapController) {
               _controller.complete(mapController);
             },
           ),
         ),
-        Row(
+        Column(
           children: [
+            SizedBox(height: 10),
+            Row(
+              children: [
+                Row(
+                  children: [
+                    SizedBox(width: 10),
+                    Icon(Icons.directions_walk),
+                    SizedBox(width: 5),
+                    Text(
+                      '${totalDistance.toStringAsFixed(3)} km',
+                      style: TextStyle(fontSize: 20),
+                    ),
+                  ],
+                ),
+                SizedBox(width: 180),
+                Row(
+                  children: [
+                    Icon(Icons.access_time),
+                    SizedBox(width: 5),
+                    Text(
+                      '${formatTime(_secondsRemaining)}',
+                      style: TextStyle(fontSize: 20),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            SizedBox(height: 10),
             ElevatedButton.icon(
-              onPressed: () {
-                Navigator.pushNamed(context, ConstantRoutes.logged);
+              onPressed: () async {
+                bool? confirm = await showConfirmationDialog();
+                if (confirm != null && confirm) {
+                  showSummaryDialog();
+                  Navigator.pushNamed(context, ConstantRoutes.logged);
+                }
               },
-              icon: Icon(Icons.stop), 
-              label: Text("Finish")
-            )
+              icon: Icon(Icons.stop),
+              label: Text("Finish"),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: ConstantColors.primary,
+              ),
+            ),
           ],
         )
       ],
-
     );
   }
 }
