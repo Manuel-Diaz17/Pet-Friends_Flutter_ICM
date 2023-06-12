@@ -23,7 +23,7 @@ class _TemplatePlatformState extends State<TemplatePlatform> {
   List<Widget> body = const [
     PageHome(),
     PagePetSitters(),
-    PageRequests(),
+    OrganismRequests(),
     PageStore(),
     OrganismProfile(),
   ];

@@ -9,7 +9,9 @@ class ConstantRoutes {
   static const messages = '/messages';
   static const petSitters = '/petSitters';
   static const petSitterProfile = '/petSitterProfile';
+  static const requests = '/requests';
   static const requestDetails = '/requestDetails';
   static const qrCode = '/qrCode';
   static const tour = '/tour';
+  static const trackRoute = '/trackRoute';
 }

@@ -79,7 +79,7 @@ class _OrganismRequestsDetailsState extends State<OrganismRequestsDetails> {
               width: 140,
               child: ElevatedButton.icon(
                 onPressed: () {
-                  Navigator.pushNamed(context, ConstantRoutes.tour);
+                  Navigator.pushNamed(context, ConstantRoutes.trackRoute);
                 },
                 icon: Icon(
                   Icons.gps_fixed,

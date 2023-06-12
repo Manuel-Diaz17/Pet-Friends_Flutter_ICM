@@ -66,7 +66,6 @@ class _OrganismTourState extends State<OrganismTour> {
         }
 
       previousLatLng = LatLng(newLoc.latitude!, newLoc.longitude!);
-      //log.i(previousLatLng);
 
       setState(() {});
     });
@@ -136,7 +135,8 @@ class _OrganismTourState extends State<OrganismTour> {
           content: const Text('Are you sure you want to finish the tour?'),
           actions: <Widget>[
             ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
+                _timer?.cancel();
                 Navigator.of(context).pop(true); // Return true when OK is pressed
               },
               child: const Text('Ok'),
