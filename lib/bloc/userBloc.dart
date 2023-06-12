@@ -12,16 +12,18 @@ class ChangeUser extends UserEvent {
   ChangeUser(this.currentUser);
 }
 
-class UserBloc extends Bloc<UserEvent, Petsitter?> {
+class UserBloc extends Bloc<UserEvent, Petsitter> {
   final log = Logger();
-  Petsitter? _currentSitter;
+  late Petsitter _currentSitter;
 
   UserBloc() : super(Petsitter()) {
     on<ChangeUser>((event, emit) async {
       log.i("Change user");
       final service = IsarService();
       Petsitter? newSitter = await service.getPetsitterById(event.currentUser);
-      emit(newSitter);
+      log.i(newSitter.toString());
+      _currentSitter = newSitter!;
+      emit(_currentSitter);
     });
   }
 

@@ -40,7 +40,7 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Pet Sitting App',
-      initialRoute: ConstantRoutes.logged,
+      initialRoute: ConstantRoutes.welcome,
       routes: {
         ConstantRoutes.welcome: (context) => const PageWelcome(),
         ConstantRoutes.signIn: (context) => const PageSignIn(),

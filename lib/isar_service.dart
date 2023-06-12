@@ -1,10 +1,12 @@
 import 'package:isar/isar.dart';
+import 'package:logger/logger.dart';
 import 'package:pet_sitting_project/entities/pet.dart';
 import 'package:pet_sitting_project/entities/petsitter.dart';
 import 'package:path_provider/path_provider.dart';
 
 class IsarService {
   late Future<Isar> db;
+  final log = Logger();
 
   IsarService() {
     db = openDB();
@@ -25,6 +27,25 @@ class IsarService {
     final isar = await db;
     final petsitter = isar.petsitters.filter().idEqualTo(id).findFirst();
     return petsitter;
+  }
+
+  Future<int> getlogin(String user, String pass) async {
+    final isar = await db;
+    try {
+      final loggedUser = await isar.petsitters
+          .filter()
+          .usernameEqualTo(user)
+          .passMatches(pass)
+          .findFirst();
+      if (loggedUser != null) {
+        return loggedUser.id;
+      } else {
+        return 0;
+      }
+    } catch (e) {
+      log.i('An exception occurred: $e');
+      return 0;
+    }
   }
 
   Future<void> cleanDb() async {

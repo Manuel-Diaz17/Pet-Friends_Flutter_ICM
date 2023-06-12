@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:logger/logger.dart';
 import 'package:pet_sitting_project/Constants/constants_colors.dart';
 import 'package:pet_sitting_project/Widgets/atoms/SettingsBloc.dart';
 import 'package:pet_sitting_project/Widgets/atoms/cameraButton.dart';
@@ -10,7 +11,9 @@ import 'package:pet_sitting_project/Widgets/atoms/image_in_profile.dart';
 import 'package:pet_sitting_project/Widgets/atoms/image_in_profile_zoom.dart';
 import 'package:pet_sitting_project/Widgets/atoms/profileText.dart';
 import 'package:pet_sitting_project/Widgets/molecules/molecule_avatar.dart';
+import 'package:pet_sitting_project/bloc/userBloc.dart';
 import 'package:pet_sitting_project/constants/constant_routes.dart';
+import 'package:pet_sitting_project/entities/petsitter.dart';
 import 'package:pet_sitting_project/widgets/molecules/molecule_store_item.dart';
 import 'package:pet_sitting_project/Widgets/molecules/molecule_message_block.dart';
 import 'package:blur/blur.dart';
@@ -116,6 +119,7 @@ class _OrganismProfileState extends State<OrganismProfile> {
   }
 
   Widget get _profileData {
+    final log = Logger();
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -127,9 +131,9 @@ class _OrganismProfileState extends State<OrganismProfile> {
         SizedBox(
           height: 5,
         ),
-        BlocBuilder<SettingsBloc, String>(builder: (context, count) {
+        BlocBuilder<UserBloc, Petsitter>(builder: (context, count) {
           return Center(
-              child: Text(count,
+              child: Text('${count.fname} ${count.lname}',
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
                   )));
