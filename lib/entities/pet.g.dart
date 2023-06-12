@@ -41,6 +41,11 @@ const PetSchema = CollectionSchema(
       id: 4,
       name: r'species',
       type: IsarType.string,
+    ),
+    r'time': PropertySchema(
+      id: 5,
+      name: r'time',
+      type: IsarType.long,
     )
   },
   estimateSize: _petEstimateSize,
@@ -71,7 +76,12 @@ int _petEstimateSize(
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
-  bytesCount += 3 + object.conditions.length * 3;
+  {
+    final value = object.conditions;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
   bytesCount += 3 + object.gender.length * 3;
   bytesCount += 3 + object.name.length * 3;
   bytesCount += 3 + object.species.length * 3;
@@ -89,6 +99,7 @@ void _petSerialize(
   writer.writeString(offsets[2], object.gender);
   writer.writeString(offsets[3], object.name);
   writer.writeString(offsets[4], object.species);
+  writer.writeLong(offsets[5], object.time);
 }
 
 Pet _petDeserialize(
@@ -99,11 +110,12 @@ Pet _petDeserialize(
 ) {
   final object = Pet();
   object.age = reader.readLong(offsets[0]);
-  object.conditions = reader.readString(offsets[1]);
+  object.conditions = reader.readStringOrNull(offsets[1]);
   object.gender = reader.readString(offsets[2]);
   object.id = id;
   object.name = reader.readString(offsets[3]);
   object.species = reader.readString(offsets[4]);
+  object.time = reader.readLongOrNull(offsets[5]);
   return object;
 }
 
@@ -117,13 +129,15 @@ P _petDeserializeProp<P>(
     case 0:
       return (reader.readLong(offset)) as P;
     case 1:
-      return (reader.readString(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 2:
       return (reader.readString(offset)) as P;
     case 3:
       return (reader.readString(offset)) as P;
     case 4:
       return (reader.readString(offset)) as P;
+    case 5:
+      return (reader.readLongOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -271,8 +285,24 @@ extension PetQueryFilter on QueryBuilder<Pet, Pet, QFilterCondition> {
     });
   }
 
+  QueryBuilder<Pet, Pet, QAfterFilterCondition> conditionsIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'conditions',
+      ));
+    });
+  }
+
+  QueryBuilder<Pet, Pet, QAfterFilterCondition> conditionsIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'conditions',
+      ));
+    });
+  }
+
   QueryBuilder<Pet, Pet, QAfterFilterCondition> conditionsEqualTo(
-    String value, {
+    String? value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -285,7 +315,7 @@ extension PetQueryFilter on QueryBuilder<Pet, Pet, QFilterCondition> {
   }
 
   QueryBuilder<Pet, Pet, QAfterFilterCondition> conditionsGreaterThan(
-    String value, {
+    String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
@@ -300,7 +330,7 @@ extension PetQueryFilter on QueryBuilder<Pet, Pet, QFilterCondition> {
   }
 
   QueryBuilder<Pet, Pet, QAfterFilterCondition> conditionsLessThan(
-    String value, {
+    String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
@@ -315,8 +345,8 @@ extension PetQueryFilter on QueryBuilder<Pet, Pet, QFilterCondition> {
   }
 
   QueryBuilder<Pet, Pet, QAfterFilterCondition> conditionsBetween(
-    String lower,
-    String upper, {
+    String? lower,
+    String? upper, {
     bool includeLower = true,
     bool includeUpper = true,
     bool caseSensitive = true,
@@ -835,6 +865,74 @@ extension PetQueryFilter on QueryBuilder<Pet, Pet, QFilterCondition> {
       ));
     });
   }
+
+  QueryBuilder<Pet, Pet, QAfterFilterCondition> timeIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'time',
+      ));
+    });
+  }
+
+  QueryBuilder<Pet, Pet, QAfterFilterCondition> timeIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'time',
+      ));
+    });
+  }
+
+  QueryBuilder<Pet, Pet, QAfterFilterCondition> timeEqualTo(int? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'time',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Pet, Pet, QAfterFilterCondition> timeGreaterThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'time',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Pet, Pet, QAfterFilterCondition> timeLessThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'time',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Pet, Pet, QAfterFilterCondition> timeBetween(
+    int? lower,
+    int? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'time',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
 }
 
 extension PetQueryObject on QueryBuilder<Pet, Pet, QFilterCondition> {}
@@ -914,6 +1012,18 @@ extension PetQuerySortBy on QueryBuilder<Pet, Pet, QSortBy> {
       return query.addSortBy(r'species', Sort.desc);
     });
   }
+
+  QueryBuilder<Pet, Pet, QAfterSortBy> sortByTime() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'time', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Pet, Pet, QAfterSortBy> sortByTimeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'time', Sort.desc);
+    });
+  }
 }
 
 extension PetQuerySortThenBy on QueryBuilder<Pet, Pet, QSortThenBy> {
@@ -988,6 +1098,18 @@ extension PetQuerySortThenBy on QueryBuilder<Pet, Pet, QSortThenBy> {
       return query.addSortBy(r'species', Sort.desc);
     });
   }
+
+  QueryBuilder<Pet, Pet, QAfterSortBy> thenByTime() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'time', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Pet, Pet, QAfterSortBy> thenByTimeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'time', Sort.desc);
+    });
+  }
 }
 
 extension PetQueryWhereDistinct on QueryBuilder<Pet, Pet, QDistinct> {
@@ -1024,6 +1146,12 @@ extension PetQueryWhereDistinct on QueryBuilder<Pet, Pet, QDistinct> {
       return query.addDistinctBy(r'species', caseSensitive: caseSensitive);
     });
   }
+
+  QueryBuilder<Pet, Pet, QDistinct> distinctByTime() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'time');
+    });
+  }
 }
 
 extension PetQueryProperty on QueryBuilder<Pet, Pet, QQueryProperty> {
@@ -1039,7 +1167,7 @@ extension PetQueryProperty on QueryBuilder<Pet, Pet, QQueryProperty> {
     });
   }
 
-  QueryBuilder<Pet, String, QQueryOperations> conditionsProperty() {
+  QueryBuilder<Pet, String?, QQueryOperations> conditionsProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'conditions');
     });
@@ -1060,6 +1188,12 @@ extension PetQueryProperty on QueryBuilder<Pet, Pet, QQueryProperty> {
   QueryBuilder<Pet, String, QQueryOperations> speciesProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'species');
+    });
+  }
+
+  QueryBuilder<Pet, int?, QQueryOperations> timeProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'time');
     });
   }
 }

@@ -107,7 +107,7 @@ class SlidableWidget extends StatelessWidget {
           // A SlidableAction can have an icon and/or a label.
           SlidableAction(
             onPressed: null,
-            backgroundColor: Color(0xFFFE4A49),
+            backgroundColor: Color.fromARGB(255, 235, 235, 235),
             foregroundColor: Colors.white,
             icon: Icons.delete,
             label: 'Delete',

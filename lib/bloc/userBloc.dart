@@ -12,6 +12,13 @@ class ChangeUser extends UserEvent {
   ChangeUser(this.currentUser);
 }
 
+class UpdateUser extends UserEvent {
+  Petsitter newinfo;
+  int id;
+
+  UpdateUser(this.newinfo, this.id);
+}
+
 class UserBloc extends Bloc<UserEvent, Petsitter> {
   final log = Logger();
   late Petsitter _currentSitter;
@@ -24,6 +31,22 @@ class UserBloc extends Bloc<UserEvent, Petsitter> {
       log.i(newSitter.toString());
       _currentSitter = newSitter!;
       emit(_currentSitter);
+    });
+    on<UpdateUser>((event, emit) async {
+      final service = IsarService();
+      log.i("updated user");
+
+      Petsitter? updated =
+          await service.updatePetsitter(event.newinfo, event.id);
+      if (updated != null) {
+        _currentSitter = updated;
+        log.i("updated: $updated");
+        log.i("current: $_currentSitter");
+        emit(_currentSitter);
+      } else {
+        // Handle the case when the update operation fails
+        log.i("Update failed");
+      }
     });
   }
 

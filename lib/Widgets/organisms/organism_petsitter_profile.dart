@@ -51,7 +51,7 @@ class OrganismPetSitterProfileState extends State<OrganismPetSitterProfile>
       chi: Column(
         children: [
           _infoSection,
-          _camera,
+          _tab,
         ],
       ),
     );
@@ -159,7 +159,7 @@ class OrganismPetSitterProfileState extends State<OrganismPetSitterProfile>
     );
   }
 
-  Widget get _camera {
+  Widget get _tab {
     return Expanded(
       child: Column(
         children: [

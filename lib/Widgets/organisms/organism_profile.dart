@@ -69,16 +69,19 @@ class _OrganismProfileState extends State<OrganismProfile> {
 
   Widget get _infoSection {
     return Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
-      Container(margin: EdgeInsets.only(right: 15, top: 15), child: _settings),
+      Container(
+          margin: const EdgeInsets.only(right: 15, top: 15), child: _settings),
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           _profileData,
-          profileText(
-            text:
-                "Introducing Scott, a devoted dog owner with a deep passion for his four-legged companions.",
-          ),
+          BlocBuilder<UserBloc, Petsitter>(builder: (context, sitter) {
+            return Center(
+                child: profileText(
+              text: '${sitter.description}',
+            ));
+          }),
         ],
       ),
       _camera,
@@ -124,11 +127,11 @@ class _OrganismProfileState extends State<OrganismProfile> {
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        CircleAvatar(
+        const CircleAvatar(
           radius: 57,
           backgroundImage: AssetImage("assets/images/homem5.jpg"),
         ),
-        SizedBox(
+        const SizedBox(
           height: 5,
         ),
         BlocBuilder<UserBloc, Petsitter>(builder: (context, count) {
@@ -138,7 +141,7 @@ class _OrganismProfileState extends State<OrganismProfile> {
                     fontWeight: FontWeight.bold,
                   )));
         }),
-        Text("876 Followers",
+        const Text("876 Followers",
             style: TextStyle(
               fontWeight: FontWeight.bold,
             )),
@@ -149,7 +152,7 @@ class _OrganismProfileState extends State<OrganismProfile> {
   Widget get _camera {
     return GestureDetector(
       child: Container(
-        margin: EdgeInsets.only(right: 15),
+        margin: const EdgeInsets.only(right: 15),
         padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
         decoration: const BoxDecoration(
             color: ConstantColors.primary,
@@ -183,55 +186,55 @@ class _OrganismProfileState extends State<OrganismProfile> {
           children: [
             GestureDetector(
                 onLongPress: () =>
-                    {_onZoom(ImageZoom(img: "assets/images/pet1.jpg"))},
+                    {_onZoom(const ImageZoom(img: "assets/images/pet1.jpg"))},
                 child: ImageInProfile(image: "assets/images/pet1.jpg")),
             GestureDetector(
                 onLongPress: () =>
-                    _onZoom(ImageZoom(img: "assets/images/pet2.jpg.jpg")),
+                    _onZoom(const ImageZoom(img: "assets/images/pet2.jpg.jpg")),
                 child: ImageInProfile(image: "assets/images/pet2.jpg")),
             GestureDetector(
                 onLongPress: () =>
-                    {_onZoom(ImageZoom(img: "assets/images/pet3.jpg"))},
+                    {_onZoom(const ImageZoom(img: "assets/images/pet3.jpg"))},
                 child: ImageInProfile(image: "assets/images/pet3.jpg")),
             GestureDetector(
                 onLongPress: () =>
-                    {_onZoom(ImageZoom(img: "assets/images/pet4.jpg"))},
+                    {_onZoom(const ImageZoom(img: "assets/images/pet4.jpg"))},
                 child: ImageInProfile(image: "assets/images/pet4.jpg")),
             GestureDetector(
                 onLongPress: () =>
-                    {_onZoom(ImageZoom(img: "assets/images/pet5.jpg"))},
+                    {_onZoom(const ImageZoom(img: "assets/images/pet5.jpg"))},
                 child: ImageInProfile(image: "assets/images/pet5.jpg")),
             GestureDetector(
                 onLongPress: () =>
-                    {_onZoom(ImageZoom(img: "assets/images/pet6.jpg"))},
+                    {_onZoom(const ImageZoom(img: "assets/images/pet6.jpg"))},
                 child: ImageInProfile(image: "assets/images/pet6.jpg")),
             GestureDetector(
                 onLongPress: () =>
-                    {_onZoom(ImageZoom(img: "assets/images/pet7.jpg"))},
+                    {_onZoom(const ImageZoom(img: "assets/images/pet7.jpg"))},
                 child: ImageInProfile(image: "assets/images/pet7.jpg")),
             GestureDetector(
                 onLongPress: () =>
-                    {_onZoom(ImageZoom(img: "assets/images/pet8.jpg"))},
+                    {_onZoom(const ImageZoom(img: "assets/images/pet8.jpg"))},
                 child: ImageInProfile(image: "assets/images/pet8.jpg")),
             GestureDetector(
                 onLongPress: () =>
-                    {_onZoom(ImageZoom(img: "assets/images/pet9.jpg"))},
+                    {_onZoom(const ImageZoom(img: "assets/images/pet9.jpg"))},
                 child: ImageInProfile(image: "assets/images/pet9.jpg")),
             GestureDetector(
                 onLongPress: () =>
-                    {_onZoom(ImageZoom(img: "assets/images/pet10.jpg"))},
+                    {_onZoom(const ImageZoom(img: "assets/images/pet10.jpg"))},
                 child: ImageInProfile(image: "assets/images/pet10.jpg")),
             GestureDetector(
                 onLongPress: () =>
-                    {_onZoom(ImageZoom(img: "assets/images/pet11.jpg"))},
+                    {_onZoom(const ImageZoom(img: "assets/images/pet11.jpg"))},
                 child: ImageInProfile(image: "assets/images/pet11.jpg")),
             GestureDetector(
                 onLongPress: () =>
-                    {_onZoom(ImageZoom(img: "assets/images/pet12.jpg"))},
+                    {_onZoom(const ImageZoom(img: "assets/images/pet12.jpg"))},
                 child: ImageInProfile(image: "assets/images/pet12.jpg")),
             GestureDetector(
                 onLongPress: () =>
-                    {_onZoom(ImageZoom(img: "assets/images/pet13.jpg"))},
+                    {_onZoom(const ImageZoom(img: "assets/images/pet13.jpg"))},
                 child: ImageInProfile(image: "assets/images/pet13.jpg")),
 
             // Other images...
@@ -244,7 +247,7 @@ class _OrganismProfileState extends State<OrganismProfile> {
   Widget get _settingsButton {
     return Button(
       label: "Edit Profile",
-      onTap: () => Navigator.pushNamed(context, ConstantRoutes.signUp),
+      onTap: () => Navigator.pushNamed(context, ConstantRoutes.settings),
       width: 250,
     );
   }

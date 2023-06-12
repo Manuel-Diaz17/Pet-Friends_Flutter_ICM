@@ -12,4 +12,5 @@ class ConstantRoutes {
   static const requestDetails = '/requestDetails';
   static const qrCode = '/qrCode';
   static const tour = '/tour';
+  static const settings = '/settings';
 }

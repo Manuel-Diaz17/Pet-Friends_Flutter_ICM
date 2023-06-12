@@ -9,7 +9,8 @@ class Pet {
   late String species;
   late int age;
   late String gender;
-  late String conditions;
+  String? conditions;
+  late int? time;
 
   @Backlink(to: "pet")
   final petsitter = IsarLink<Petsitter>();

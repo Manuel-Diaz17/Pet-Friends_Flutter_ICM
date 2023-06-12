@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:bloc/bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pet_sitting_project/Widgets/organisms/organism_profile.dart';
+import 'package:pet_sitting_project/Widgets/pages/page.settings.dart';
 import 'package:pet_sitting_project/Widgets/pages/page_petsitter_profile.dart';
 import 'package:pet_sitting_project/bloc/userBloc.dart';
 import 'package:pet_sitting_project/Widgets/pages/page_qrcode.dart';
@@ -57,7 +59,8 @@ class App extends StatelessWidget {
             ),
         ConstantRoutes.requestDetails: (context) => const PageRequestDetails(),
         ConstantRoutes.qrCode: (context) => const PageQrCode(),
-        ConstantRoutes.tour: (context) => const PageTour()
+        ConstantRoutes.tour: (context) => const PageTour(),
+        ConstantRoutes.settings: (context) => const PageSettings()
       },
     );
   }

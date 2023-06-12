@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:isar/isar.dart';
+import 'package:logger/logger.dart';
 import 'package:pet_sitting_project/Constants/constant_routes.dart';
 import 'package:pet_sitting_project/Constants/constants_colors.dart';
 import 'package:pet_sitting_project/Widgets/atoms/SettingsBloc.dart';
@@ -12,33 +13,42 @@ import 'package:pet_sitting_project/widgets/atoms/button.dart';
 import 'package:pet_sitting_project/widgets/atoms/input.dart';
 import 'package:intl/intl.dart';
 
-class OrganismSignUp extends StatefulWidget {
-  const OrganismSignUp({super.key});
+class OrganismSettings extends StatefulWidget {
+  const OrganismSettings({super.key});
 
   @override
-  State<OrganismSignUp> createState() => _OrganismSignUpState();
+  State<OrganismSettings> createState() => _OrganismSettingsState();
 }
 
-class _OrganismSignUpState extends State<OrganismSignUp> {
+class _OrganismSettingsState extends State<OrganismSettings> {
   DateTime? _selectedDate;
   final DateFormat formatter = DateFormat('yyyy-MM-dd');
   String? _selectedRole;
-  late String fName;
-  late String lName;
-  late String username;
-  late String pass;
-  late String cc;
+  String? fName;
+  String? lName;
+  String? username;
+  String? pass;
+  String? cc;
+  String? description;
   final service = IsarService();
+  final log = Logger();
+  late int id;
+  late Petsitter current;
 
-  void _changeName(s) {
-    SettingsBloc bloc = BlocProvider.of<SettingsBloc>(context);
-
-    setState(() => bloc.add(ChangeName(s)));
+  void _updateUser(id, s) {
+    UserBloc bloc = BlocProvider.of<UserBloc>(context);
+    setState(() => bloc.add(UpdateUser(s, id)));
   }
 
-  void _changeUser(int id) {
-    UserBloc bloc = BlocProvider.of<UserBloc>(context);
-    setState(() => bloc.add(ChangeUser(id)));
+  @override
+  void initState() {
+    super.initState();
+    final petsitter = context
+        .read<UserBloc>()
+        .state; // Use context.read to access UserBloc state
+    current = petsitter;
+    id = petsitter.id;
+    log.i(petsitter.toString());
   }
 
   @override
@@ -49,10 +59,7 @@ class _OrganismSignUpState extends State<OrganismSignUp> {
         child: Wrap(
           runSpacing: 20,
           alignment: WrapAlignment.center,
-          children: [
-            _profileImage,
-            _form,
-          ],
+          children: [_profileImage, _form],
         ),
       )
     ]);
@@ -104,6 +111,7 @@ class _OrganismSignUpState extends State<OrganismSignUp> {
         _userAndPass,
         _personalInfo,
         _questionSection,
+        _description,
         _nextButton,
       ],
     );
@@ -117,14 +125,14 @@ class _OrganismSignUpState extends State<OrganismSignUp> {
           onValueChanged: (s) {
             username = s;
           },
-          hintText: 'Username',
+          hintText: current.username,
           keyboardType: TextInputType.name,
         ),
         Input(
           onValueChanged: (s) {
             pass = s;
           },
-          hintText: 'Password',
+          hintText: '********',
           keyboardType: TextInputType.visiblePassword,
         ),
       ],
@@ -139,7 +147,7 @@ class _OrganismSignUpState extends State<OrganismSignUp> {
             Expanded(
               child: Input(
                 onValueChanged: (s) => fName = s,
-                hintText: 'First Name',
+                hintText: current.fname,
                 keyboardType: TextInputType.name,
                 width: double.infinity / 3,
               ),
@@ -150,7 +158,7 @@ class _OrganismSignUpState extends State<OrganismSignUp> {
             Expanded(
               child: Input(
                 onValueChanged: (s) => lName = s,
-                hintText: 'Last Name',
+                hintText: current.lname,
                 keyboardType: TextInputType.name,
                 width: double.infinity / 4,
               ),
@@ -166,7 +174,7 @@ class _OrganismSignUpState extends State<OrganismSignUp> {
                 onTap: _onTapCalendar,
                 decoration: InputDecoration(
                   hintText: _selectedDate == null
-                      ? 'Birth Date'
+                      ? DateFormat('dd/MM/yyyy').format(current.birthDate)
                       : formatter.format(_selectedDate!),
                   suffixIcon: const Icon(Icons.calendar_today),
                 ),
@@ -176,7 +184,7 @@ class _OrganismSignUpState extends State<OrganismSignUp> {
             Expanded(
               child: Input(
                 onValueChanged: (s) => cc = s,
-                hintText: 'ID/Passport',
+                hintText: current.cc,
                 keyboardType: TextInputType.name,
               ),
             ),
@@ -223,6 +231,14 @@ class _OrganismSignUpState extends State<OrganismSignUp> {
     );
   }
 
+  Widget get _description {
+    return Input(
+      onValueChanged: (s) => description = s,
+      hintText: current.description ?? "Description",
+      keyboardType: TextInputType.multiline,
+    );
+  }
+
   Widget get _nextButton {
     return Container(
       alignment: Alignment.bottomRight,
@@ -231,26 +247,20 @@ class _OrganismSignUpState extends State<OrganismSignUp> {
         width: 80,
         height: 40,
         fontSize: 16,
-        onTap: () async {
+        onTap: () {
           if (_selectedRole == "pet_sitter") {
-            Navigator.pushNamed(context, ConstantRoutes.signIn);
-            _changeName('$fName $lName');
-
-            int id = await service.savePetToSitter(
-                Petsitter()
-                  ..fname = fName
-                  ..lname = lName
-                  ..username = username
-                  ..pass = pass
-                  ..birthDate = _selectedDate!
-                  ..cc = cc,
-                Pet()
-                  ..age = 10
-                  ..gender = "M"
-                  ..name = "Rex"
-                  ..time = 1
-                  ..species = "German Sheperd");
-            _changeUser(id);
+            Navigator.pushNamed(context, ConstantRoutes.logged);
+            _updateUser(
+              id,
+              Petsitter()
+                ..fname = fName ?? current.fname
+                ..lname = lName ?? current.lname
+                ..username = username ?? current.username
+                ..pass = pass ?? current.pass
+                ..description = description
+                ..birthDate = _selectedDate ?? current.birthDate
+                ..cc = cc ?? current.cc,
+            );
           }
         },
       ),
