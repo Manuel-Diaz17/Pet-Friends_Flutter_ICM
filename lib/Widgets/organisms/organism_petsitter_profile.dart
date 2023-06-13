@@ -312,9 +312,8 @@ class OrganismPetSitterProfileState extends State<OrganismPetSitterProfile>
                       ],
                     ),
                     trailing: Icon(Icons.arrow_forward_ios),
-                    onTap: () {
-                      // Handle onTap event
-                    },
+                    onTap: () =>
+                        Navigator.pushNamed(context, ConstantRoutes.signUp2),
                   ),
                 ),
               );

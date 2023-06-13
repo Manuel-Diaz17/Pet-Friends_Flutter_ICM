@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pet_sitting_project/Constants/constant_routes.dart';
+import 'package:pet_sitting_project/bloc/userBloc.dart';
 import 'package:pet_sitting_project/constants/constants_colors.dart';
+import 'package:pet_sitting_project/entities/pet.dart';
+import 'package:pet_sitting_project/isar_service.dart';
 import 'package:pet_sitting_project/widgets/atoms/button.dart';
 import 'package:pet_sitting_project/widgets/atoms/input.dart';
 
@@ -13,6 +17,17 @@ class OrganismSignUp2 extends StatefulWidget {
 
 class _OrganismSignUp2State extends State<OrganismSignUp2> {
   String? _selectedRole;
+  late String name;
+  late String species;
+  late int age;
+  late String gender;
+  String? conditions;
+  late int? time;
+  String? location;
+  String? serviceCode;
+  int? tourTime;
+  String? owner;
+  final service = IsarService();
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +54,7 @@ class _OrganismSignUp2State extends State<OrganismSignUp2> {
       children: [
         _nameAndSpecie,
         _petInfo,
-        _questionSection,
+        //_questionSection,
         _additionalInfo,
         _nextButton,
       ],
@@ -51,12 +66,16 @@ class _OrganismSignUp2State extends State<OrganismSignUp2> {
       runSpacing: 10,
       children: [
         Input(
-          onValueChanged: (s) {},
+          onValueChanged: (s) {
+            name = s;
+          },
           hintText: 'Name',
           keyboardType: TextInputType.name,
         ),
         Input(
-          onValueChanged: (s) {},
+          onValueChanged: (s) {
+            species = s;
+          },
           hintText: 'Specie',
           keyboardType: TextInputType.visiblePassword,
         ),
@@ -65,23 +84,86 @@ class _OrganismSignUp2State extends State<OrganismSignUp2> {
   }
 
   Widget get _petInfo {
-    return Column(
+    return Wrap(
+      runSpacing: 10,
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Expanded(
               child: Input(
-                onValueChanged: (s) {},
+                onValueChanged: (s) {
+                  int? parsedAge = int.tryParse(s);
+                  if (parsedAge != null) {
+                    setState(() {
+                      age = parsedAge;
+                    });
+                  }
+                },
                 hintText: 'Age',
+                keyboardType: TextInputType.number,
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Input(
+                onValueChanged: (s) {
+                  gender = s;
+                },
+                hintText: 'Gender',
+                keyboardType: TextInputType.name,
+              ),
+            ),
+          ],
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              child: Input(
+                onValueChanged: (s) {
+                  location = s;
+                },
+                hintText: 'Location',
                 keyboardType: TextInputType.name,
               ),
             ),
             const SizedBox(width: 10),
             Expanded(
               child: Input(
-                onValueChanged: (s) {},
-                hintText: 'Gender',
+                onValueChanged: (s) {
+                  serviceCode = s;
+                },
+                hintText: 'Code',
+                keyboardType: TextInputType.name,
+              ),
+            ),
+          ],
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              child: Input(
+                onValueChanged: (s) {
+                  int? parsedAge = int.tryParse(s);
+                  if (parsedAge != null) {
+                    setState(() {
+                      tourTime = parsedAge;
+                    });
+                  }
+                },
+                hintText: 'Tour time',
+                keyboardType: const TextInputType.numberWithOptions(),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Input(
+                onValueChanged: (s) {
+                  owner = s;
+                },
+                hintText: 'Owner',
                 keyboardType: TextInputType.name,
               ),
             ),
@@ -91,7 +173,7 @@ class _OrganismSignUp2State extends State<OrganismSignUp2> {
     );
   }
 
-  Widget get _questionSection {
+  /*  Widget get _questionSection {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -126,7 +208,7 @@ class _OrganismSignUp2State extends State<OrganismSignUp2> {
         ),
       ],
     );
-  }
+  } */
 
   Widget get _additionalInfo {
     return Wrap(
@@ -158,12 +240,25 @@ class _OrganismSignUp2State extends State<OrganismSignUp2> {
     return Container(
       alignment: Alignment.bottomRight,
       child: Button(
-        label: 'Next',
+        label: 'Add',
         width: 80,
         height: 40,
         fontSize: 16,
-        onTap: () {
-          Navigator.pushNamed(context, ConstantRoutes.signIn);
+        onTap: () async {
+          Navigator.pushNamed(context, ConstantRoutes.logged);
+          final petsitter = context.read<UserBloc>().state;
+          int id = await service.savePetToSitter(
+              petsitter,
+              Pet()
+                ..age = age
+                ..gender = gender
+                ..name = name
+                ..time = tourTime
+                ..species = species
+                ..location = location
+                ..serviceCode = serviceCode
+                ..owner = owner
+                ..conditions = conditions);
         },
       ),
     );

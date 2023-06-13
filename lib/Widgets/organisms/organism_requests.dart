@@ -67,12 +67,7 @@ class _OrganismRequestsState extends State<OrganismRequests> {
             (context, index) {
               final pet = pets[index];
               return SlidableWidget(
-                molecule: MoleculeRequestBlock(
-                  name: pet.name,
-                  age: pet.age.toString(),
-                  time: pet.time.toString(),
-                  image: "assets/images/jack.jpg",
-                ),
+                molecule: MoleculeRequestBlock(id: pet.id),
               );
             },
             childCount: pets.length,

@@ -23,6 +23,11 @@ class IsarService {
     return newPetsitter.id;
   }
 
+  Future<Pet?> getPetById(int id) async {
+    final isar = await db;
+    return await isar.pets.get(id);
+  }
+
   Future<Petsitter?> updatePetsitter(Petsitter newinfo, int id) async {
     final isar = await db;
     Petsitter? novo;

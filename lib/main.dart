@@ -8,6 +8,7 @@ import 'package:pet_sitting_project/Widgets/pages/page.settings.dart';
 import 'package:pet_sitting_project/Widgets/pages/page_petsitter_profile.dart';
 import 'package:pet_sitting_project/Widgets/pages/page_requests.dart';
 import 'package:pet_sitting_project/Widgets/pages/page_track_route.dart';
+import 'package:pet_sitting_project/bloc/petBloc.dart';
 
 import 'package:pet_sitting_project/bloc/userBloc.dart';
 import 'package:pet_sitting_project/Widgets/pages/page_qrcode.dart';
@@ -33,6 +34,7 @@ void main() {
             create: (BuildContext context) => SettingsBloc()),
         BlocProvider<CartBloc>(create: (BuildContext context) => CartBloc()),
         BlocProvider(create: (BuildContext context) => UserBloc()),
+        BlocProvider(create: (BuildContext context) => PetBloc()),
       ],
       child: const MaterialApp(
           title: 'PetSitting',

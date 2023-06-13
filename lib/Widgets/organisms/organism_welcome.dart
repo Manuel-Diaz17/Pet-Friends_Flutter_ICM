@@ -29,11 +29,11 @@ class _OrganismWelcomeState extends State<OrganismWelcome> {
 
   Widget get _logo {
     return Container(
-      width: 200,
-      height: 200,
+      width: 250,
+      height: 250,
       decoration: const BoxDecoration(
           image: DecorationImage(
-            image: AssetImage("assets/images/logo.png"),
+            image: AssetImage("assets/images/logo_petfriends.png"),
           ),
           borderRadius: BorderRadius.all(Radius.circular(8))),
     );

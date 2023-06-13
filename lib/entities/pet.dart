@@ -11,6 +11,10 @@ class Pet {
   late String gender;
   String? conditions;
   late int? time;
+  String? location;
+  String? serviceCode;
+  int? tourTime;
+  String? owner;
 
   @Backlink(to: "pet")
   final petsitter = IsarLink<Petsitter>();
