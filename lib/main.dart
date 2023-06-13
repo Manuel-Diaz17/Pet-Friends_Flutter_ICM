@@ -1,9 +1,14 @@
+//import 'dart:html';
+
 import 'package:flutter/material.dart';
 import 'package:bloc/bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pet_sitting_project/Widgets/organisms/organism_profile.dart';
 import 'package:pet_sitting_project/Widgets/pages/page.settings.dart';
 import 'package:pet_sitting_project/Widgets/pages/page_petsitter_profile.dart';
+import 'package:pet_sitting_project/Widgets/pages/page_requests.dart';
+import 'package:pet_sitting_project/Widgets/pages/page_track_route.dart';
+
 import 'package:pet_sitting_project/bloc/userBloc.dart';
 import 'package:pet_sitting_project/Widgets/pages/page_qrcode.dart';
 import 'package:pet_sitting_project/Widgets/pages/page_request_details.dart';
@@ -57,9 +62,11 @@ class App extends StatelessWidget {
         ConstantRoutes.petSitters: (context) => const TemplatePlatform(
               index: 1,
             ),
+        ConstantRoutes.requests: (context) => const TemplatePlatform(index: 2),
         ConstantRoutes.requestDetails: (context) => const PageRequestDetails(),
         ConstantRoutes.qrCode: (context) => const PageQrCode(),
         ConstantRoutes.tour: (context) => const PageTour(),
+        ConstantRoutes.trackRoute: (context) => const PageTrackRoute(),
         ConstantRoutes.settings: (context) => const PageSettings()
       },
     );

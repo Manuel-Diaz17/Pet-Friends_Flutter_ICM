@@ -1,5 +1,8 @@
+//import 'dart:html';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:pet_sitting_project/Constants/constants_colors.dart';
 import 'package:pet_sitting_project/constants/constant_routes.dart';
 
 
@@ -14,6 +17,58 @@ class _OrganismQrCodeState extends State<OrganismQrCode> {
 
   String ticket = '';
 
+  Future<void> showValidateDialog(String petCode, String petName) async {
+    await showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Summary'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('QR Code Validated!'),
+              const SizedBox(height: 10),
+              Text('$petCode:$petName'),
+            ],
+          ),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> showErrorDialog(String error) async {
+    await showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Summary'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('$error'),
+            ],
+          ),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   readQrCode() async{
     String code = await FlutterBarcodeScanner.scanBarcode("#FFFFFF", "cancel", false, ScanMode.QR);
 
@@ -27,15 +82,20 @@ class _OrganismQrCodeState extends State<OrganismQrCode> {
           // TODO: Validate the pet data against your database or predefined list
           // Example validation logic:
           if (petCode == '12345' && petName == 'Max') {
-            ticket = 'Validated: $petCode:$petName';
+            //ticket = 'Validated: $petCode:$petName';
+            showValidateDialog(petCode, petName);
+            Navigator.pushNamed(context, ConstantRoutes.tour);
           } else {
-            ticket = 'Invalid pet data';
+            //ticket = 'Invalid pet data';
+            showErrorDialog("Invalid pet data!");
           }
         } else {
-          ticket = 'Invalid QR code format';
+          //ticket = 'Invalid QR code format';
+          showErrorDialog("Invalid QR Code format!");
         }
       } else {
-        ticket = 'Not validated';
+        //ticket = 'Not validated';
+        showErrorDialog("Not validated!");
       }
     });
 
@@ -72,7 +132,14 @@ class _OrganismQrCodeState extends State<OrganismQrCode> {
             ),
           ),
         
-        ElevatedButton.icon(onPressed: readQrCode, icon: Icon(Icons.qr_code), label: Text('Validate')),
+        ElevatedButton.icon(
+          onPressed: readQrCode,
+          icon: Icon(Icons.qr_code),
+          label: Text('Validate'),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Color.fromARGB(255, 0, 0, 0),
+          ),
+        ),
       ],
     );
   }
