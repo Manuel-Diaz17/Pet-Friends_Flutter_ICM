@@ -25,7 +25,7 @@ class _TemplatePlatformState extends State<TemplatePlatform> {
     PageHome(),
     PagePetSitters(),
     OrganismRequests(),
-    PageStore(),
+    //PageStore(),
     PageProfile(),
   ];
 
@@ -71,10 +71,10 @@ class _TemplatePlatformState extends State<TemplatePlatform> {
               icon: Icon(Icons.tour),
               label: "Requests",
             ),
-            BottomNavigationBarItem(
+            /* BottomNavigationBarItem(
               icon: Icon(Icons.shopping_bag),
               label: "Store",
-            ),
+            ), */
             BottomNavigationBarItem(
               icon: Icon(Icons.person),
               label: "Profile",

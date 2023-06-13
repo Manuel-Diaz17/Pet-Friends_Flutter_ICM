@@ -15,22 +15,20 @@ class OrganismRequestsDetails extends StatefulWidget {
 }
 
 class _OrganismRequestsDetailsState extends State<OrganismRequestsDetails> {
+  
+
+  
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<PetBloc, Pet>(builder: (context, pet) {
-      return _Details(pet);
-    });
-  }
-}
-
-class _Details extends StatelessWidget {
-  final Pet pet;
-
-  const _Details(this.pet, {Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
+      String petName = pet.name;
+      int petAge = pet.age;
+      String petCode = pet.serviceCode!;
+      String petOwner = pet.owner!;
+      String petLocation = pet.location!;
+      int petTime = pet.time!;
+      return  Column(
       children: [
         Container(
           decoration: const BoxDecoration(
@@ -54,7 +52,7 @@ class _Details extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    pet.name,
+                    petName,
                     style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
                   ),
                   SizedBox(height: 10),
@@ -127,6 +125,6 @@ class _Details extends StatelessWidget {
           ],
         ),
       ],
-    );
+    );});
   }
 }

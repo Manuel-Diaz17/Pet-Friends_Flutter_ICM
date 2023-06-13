@@ -228,7 +228,7 @@ class _OrganismProfileState extends State<OrganismProfile> {
             return const Center(child: CircularProgressIndicator());
           },
         ),
-      ).frosted(),
+      ),
     );
   }
 

@@ -113,8 +113,8 @@ class _OrganismTourState extends State<OrganismTour> {
     const oneSecond = Duration(seconds: 1);
     _timer = Timer.periodic(oneSecond, (Timer timer) {
       setState(() {
-        if (serviceTime > 0) {
-          serviceTime--;
+        if (serviceTimeSeconds > 0) {
+          serviceTimeSeconds--;
         } else {
           timer.cancel();
           showSummaryDialog();

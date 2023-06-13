@@ -167,78 +167,80 @@ Future<LatLng> getCoordinatesForCity(String cityName) async {
 
     return Column(
       children: [
-        Container(
-          height: 750,
-          width: MediaQuery.of(context).size.width,
-          child: Stack(
-            children: [
-              GoogleMap(
-              initialCameraPosition: CameraPosition(
-                target: LatLng(
-                  currentLocation!.latitude!,
-                  currentLocation!.longitude!,
+        Expanded(
+          child: Container(
+            height: 750,
+            width: MediaQuery.of(context).size.width,
+            child: Stack(
+              children: [
+                GoogleMap(
+                initialCameraPosition: CameraPosition(
+                  target: LatLng(
+                    currentLocation!.latitude!,
+                    currentLocation!.longitude!,
+                  ),
+                  zoom: 14.5,
                 ),
-                zoom: 14.5,
-              ),
-              polylines: polylineCoordinates.isNotEmpty
-                ? {
-                    Polyline(
-                      polylineId: PolylineId("route"),
-                      points: polylineCoordinates,
-                      color: ConstantColors.primary,
-                      width: 6,
-                    ),
-                  }
-                : Set<Polyline>(),
-              markers: {
+                polylines: polylineCoordinates.isNotEmpty
+                  ? {
+                      Polyline(
+                        polylineId: PolylineId("route"),
+                        points: polylineCoordinates,
+                        color: ConstantColors.primary,
+                        width: 6,
+                      ),
+                    }
+                  : Set<Polyline>(),
+                markers: {
+                  Marker(
+                  markerId: MarkerId("currentLocation"),
+                  icon: currentLocationIcon,
+                  position: LatLng(
+                    currentLocation!.latitude!,
+                    currentLocation!.longitude!,
+                  ),
+                ),
                 Marker(
-                markerId: MarkerId("currentLocation"),
-                icon: currentLocationIcon,
-                position: LatLng(
-                  currentLocation!.latitude!,
-                  currentLocation!.longitude!,
-                ),
-              ),
-              Marker(
-                markerId: MarkerId("petLocation"),
-                icon: petLocationIcon,
-                position: polylineCoordinates.isNotEmpty
-                        ? polylineCoordinates.last
-                        : LatLng(0, 0),
-                )
-              },
-                onMapCreated: (mapController) {
-                  _controller.complete(mapController);
+                  markerId: MarkerId("petLocation"),
+                  icon: petLocationIcon,
+                  position: polylineCoordinates.isNotEmpty
+                          ? polylineCoordinates.last
+                          : LatLng(0, 0),
+                  )
                 },
-              ),
-              Positioned(
-                    bottom: 150,
-                    left: 40,
-                    child: Container( 
-                     child: Card( 
-                         child: Container(
-                            padding: EdgeInsets.all(20),
-                            child: Text("Pet Distance: " + distance.toStringAsFixed(2) + " KM",
-                                         style: TextStyle(fontSize: 20, fontWeight:FontWeight.bold))
-                         ),
-                     )
-                    )
-                 ),
-              Positioned(
-                    top: -7,
-                    left: 0,
-                    child: ElevatedButton.icon(
-                      onPressed: () {
-                          Navigator.pushNamed(context, ConstantRoutes.requests);
-                      },
-                      icon: Icon(Icons.keyboard_return),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: ConstantColors.primary,
-                      ), 
-                      label: Text(''),
+                  onMapCreated: (mapController) {
+                    _controller.complete(mapController);
+                  },
                 ),
-              )
-            ]
+                Positioned(
+                      bottom: 150,
+                      left: 40,
+                      child: Container( 
+                       child: Card( 
+                           child: Container(
+                              padding: EdgeInsets.all(20),
+                              child: Text("Pet Distance: " + distance.toStringAsFixed(2) + " KM",
+                                           style: TextStyle(fontSize: 20, fontWeight:FontWeight.bold))
+                           ),
+                       )
+                      )
+                   ),
+                Positioned(
+                      top: -7,
+                      left: 0,
+                      child: ElevatedButton.icon(
+                        onPressed: () {
+                            Navigator.pushNamed(context, ConstantRoutes.requests);
+                        },
+                        icon: Icon(Icons.keyboard_return),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: ConstantColors.primary,
+                        ), 
+                        label: Text(''),
+                  ),
+                )
+              ]
+            ),
           ),
         ),
       ],
