@@ -75,6 +75,12 @@ const PetSchema = CollectionSchema(
   idName: r'id',
   indexes: {},
   links: {
+    r'image': LinkSchema(
+      id: 1467645605816878253,
+      name: r'image',
+      target: r'ImageEntity',
+      single: true,
+    ),
     r'petsitter': LinkSchema(
       id: -1620140317447872327,
       name: r'petsitter',
@@ -202,11 +208,12 @@ Id _petGetId(Pet object) {
 }
 
 List<IsarLinkBase<dynamic>> _petGetLinks(Pet object) {
-  return [object.petsitter];
+  return [object.image, object.petsitter];
 }
 
 void _petAttach(IsarCollection<dynamic> col, Id id, Pet object) {
   object.id = id;
+  object.image.attach(col, col.isar.collection<ImageEntity>(), r'image', id);
   object.petsitter
       .attach(col, col.isar.collection<Petsitter>(), r'petsitter', id);
 }
@@ -1494,6 +1501,19 @@ extension PetQueryFilter on QueryBuilder<Pet, Pet, QFilterCondition> {
 extension PetQueryObject on QueryBuilder<Pet, Pet, QFilterCondition> {}
 
 extension PetQueryLinks on QueryBuilder<Pet, Pet, QFilterCondition> {
+  QueryBuilder<Pet, Pet, QAfterFilterCondition> image(
+      FilterQuery<ImageEntity> q) {
+    return QueryBuilder.apply(this, (query) {
+      return query.link(q, r'image');
+    });
+  }
+
+  QueryBuilder<Pet, Pet, QAfterFilterCondition> imageIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(r'image', 0, true, 0, true);
+    });
+  }
+
   QueryBuilder<Pet, Pet, QAfterFilterCondition> petsitter(
       FilterQuery<Petsitter> q) {
     return QueryBuilder.apply(this, (query) {

@@ -70,6 +70,12 @@ const PetsitterSchema = CollectionSchema(
       name: r'pet',
       target: r'Pet',
       single: false,
+    ),
+    r'images': LinkSchema(
+      id: -4162871250656570885,
+      name: r'images',
+      target: r'ImageEntity',
+      single: false,
     )
   },
   embeddedSchemas: {},
@@ -167,12 +173,13 @@ Id _petsitterGetId(Petsitter object) {
 }
 
 List<IsarLinkBase<dynamic>> _petsitterGetLinks(Petsitter object) {
-  return [object.pet];
+  return [object.pet, object.images];
 }
 
 void _petsitterAttach(IsarCollection<dynamic> col, Id id, Petsitter object) {
   object.id = id;
   object.pet.attach(col, col.isar.collection<Pet>(), r'pet', id);
+  object.images.attach(col, col.isar.collection<ImageEntity>(), r'images', id);
 }
 
 extension PetsitterQueryWhereSort
@@ -1292,6 +1299,64 @@ extension PetsitterQueryLinks
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.linkLength(r'pet', lower, includeLower, upper, includeUpper);
+    });
+  }
+
+  QueryBuilder<Petsitter, Petsitter, QAfterFilterCondition> images(
+      FilterQuery<ImageEntity> q) {
+    return QueryBuilder.apply(this, (query) {
+      return query.link(q, r'images');
+    });
+  }
+
+  QueryBuilder<Petsitter, Petsitter, QAfterFilterCondition> imagesLengthEqualTo(
+      int length) {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(r'images', length, true, length, true);
+    });
+  }
+
+  QueryBuilder<Petsitter, Petsitter, QAfterFilterCondition> imagesIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(r'images', 0, true, 0, true);
+    });
+  }
+
+  QueryBuilder<Petsitter, Petsitter, QAfterFilterCondition> imagesIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(r'images', 0, false, 999999, true);
+    });
+  }
+
+  QueryBuilder<Petsitter, Petsitter, QAfterFilterCondition>
+      imagesLengthLessThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(r'images', 0, true, length, include);
+    });
+  }
+
+  QueryBuilder<Petsitter, Petsitter, QAfterFilterCondition>
+      imagesLengthGreaterThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(r'images', length, include, 999999, true);
+    });
+  }
+
+  QueryBuilder<Petsitter, Petsitter, QAfterFilterCondition> imagesLengthBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(
+          r'images', lower, includeLower, upper, includeUpper);
     });
   }
 }

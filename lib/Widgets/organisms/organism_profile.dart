@@ -1,8 +1,11 @@
+import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:isar/isar.dart';
 import 'package:logger/logger.dart';
 import 'package:pet_sitting_project/Constants/constants_colors.dart';
 import 'package:pet_sitting_project/Widgets/atoms/SettingsBloc.dart';
@@ -14,10 +17,15 @@ import 'package:pet_sitting_project/Widgets/molecules/molecule_avatar.dart';
 import 'package:pet_sitting_project/bloc/userBloc.dart';
 import 'package:pet_sitting_project/constants/constant_routes.dart';
 import 'package:pet_sitting_project/entities/petsitter.dart';
+import 'package:pet_sitting_project/isar_service.dart';
 import 'package:pet_sitting_project/widgets/molecules/molecule_store_item.dart';
 import 'package:pet_sitting_project/Widgets/molecules/molecule_message_block.dart';
 import 'package:blur/blur.dart';
 import 'package:pet_sitting_project/widgets/atoms/button.dart';
+import 'package:image_picker_android/image_picker_android.dart';
+import 'package:image_picker_platform_interface/image_picker_platform_interface.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class OrganismProfile extends StatefulWidget {
   const OrganismProfile({super.key});
@@ -30,6 +38,7 @@ class _OrganismProfileState extends State<OrganismProfile> {
   final _space = const SizedBox(
     height: 30,
   );
+  final service = IsarService();
   bool _zoomed = false;
   Widget _zoomImg = Container();
   double _zoomOpa = 0;
@@ -151,6 +160,7 @@ class _OrganismProfileState extends State<OrganismProfile> {
 
   Widget get _camera {
     return GestureDetector(
+      onTap: _pickImage,
       child: Container(
         margin: const EdgeInsets.only(right: 15),
         padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
@@ -176,69 +186,47 @@ class _OrganismProfileState extends State<OrganismProfile> {
   Widget get _gallery {
     return Expanded(
       child: SingleChildScrollView(
-        child: GridView.count(
-          primary: false,
-          padding: const EdgeInsets.all(2),
-          crossAxisSpacing: 0,
-          mainAxisSpacing: 0,
-          crossAxisCount: 3,
-          shrinkWrap: true,
-          children: [
-            GestureDetector(
-                onLongPress: () =>
-                    {_onZoom(const ImageZoom(img: "assets/images/pet1.jpg"))},
-                child: ImageInProfile(image: "assets/images/pet1.jpg")),
-            GestureDetector(
-                onLongPress: () =>
-                    _onZoom(const ImageZoom(img: "assets/images/pet2.jpg.jpg")),
-                child: ImageInProfile(image: "assets/images/pet2.jpg")),
-            GestureDetector(
-                onLongPress: () =>
-                    {_onZoom(const ImageZoom(img: "assets/images/pet3.jpg"))},
-                child: ImageInProfile(image: "assets/images/pet3.jpg")),
-            GestureDetector(
-                onLongPress: () =>
-                    {_onZoom(const ImageZoom(img: "assets/images/pet4.jpg"))},
-                child: ImageInProfile(image: "assets/images/pet4.jpg")),
-            GestureDetector(
-                onLongPress: () =>
-                    {_onZoom(const ImageZoom(img: "assets/images/pet5.jpg"))},
-                child: ImageInProfile(image: "assets/images/pet5.jpg")),
-            GestureDetector(
-                onLongPress: () =>
-                    {_onZoom(const ImageZoom(img: "assets/images/pet6.jpg"))},
-                child: ImageInProfile(image: "assets/images/pet6.jpg")),
-            GestureDetector(
-                onLongPress: () =>
-                    {_onZoom(const ImageZoom(img: "assets/images/pet7.jpg"))},
-                child: ImageInProfile(image: "assets/images/pet7.jpg")),
-            GestureDetector(
-                onLongPress: () =>
-                    {_onZoom(const ImageZoom(img: "assets/images/pet8.jpg"))},
-                child: ImageInProfile(image: "assets/images/pet8.jpg")),
-            GestureDetector(
-                onLongPress: () =>
-                    {_onZoom(const ImageZoom(img: "assets/images/pet9.jpg"))},
-                child: ImageInProfile(image: "assets/images/pet9.jpg")),
-            GestureDetector(
-                onLongPress: () =>
-                    {_onZoom(const ImageZoom(img: "assets/images/pet10.jpg"))},
-                child: ImageInProfile(image: "assets/images/pet10.jpg")),
-            GestureDetector(
-                onLongPress: () =>
-                    {_onZoom(const ImageZoom(img: "assets/images/pet11.jpg"))},
-                child: ImageInProfile(image: "assets/images/pet11.jpg")),
-            GestureDetector(
-                onLongPress: () =>
-                    {_onZoom(const ImageZoom(img: "assets/images/pet12.jpg"))},
-                child: ImageInProfile(image: "assets/images/pet12.jpg")),
-            GestureDetector(
-                onLongPress: () =>
-                    {_onZoom(const ImageZoom(img: "assets/images/pet13.jpg"))},
-                child: ImageInProfile(image: "assets/images/pet13.jpg")),
+        child: FutureBuilder<List<List<int>?>>(
+          future: _readImagesFromDatabase(),
+          builder: (context, AsyncSnapshot<List<List<int>?>> snapshot) {
+            if (snapshot.hasError) {
+              return Text("Error appeared ${snapshot.error}");
+            }
 
-            // Other images...
-          ],
+            if (snapshot.hasData) {
+              if (snapshot.data == null) return const Text("Nothing to show");
+
+              return GridView.builder(
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                padding: const EdgeInsets.all(2),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  crossAxisSpacing: 0,
+                  mainAxisSpacing: 0,
+                ),
+                itemCount: snapshot.data!.length,
+                itemBuilder: (context, index) {
+                  final imageBytes = snapshot.data![index];
+                  final imageData = imageBytes != null
+                      ? Uint8List.fromList(imageBytes)
+                      : null;
+
+                  return GestureDetector(
+                      onLongPress: () {
+                        _onZoom(ImageZoom(
+                          imageData: imageData,
+                          image: 'assets/puppy2.jpg',
+                        ));
+                      },
+                      child: ImageInProfile(
+                          imageData: imageData, image: 'assets/puppy2.jpg'));
+                },
+              );
+            }
+
+            return const Center(child: CircularProgressIndicator());
+          },
         ),
       ).frosted(),
     );
@@ -263,5 +251,79 @@ class _OrganismProfileState extends State<OrganismProfile> {
       textColor: ConstantColors.primary,
       borderColor: ConstantColors.primary,
     );
+  }
+
+  Future<void> _pickImage() async {
+    final ImagePickerPlatform imagePickerImplementation =
+        ImagePickerPlatform.instance;
+    if (imagePickerImplementation is ImagePickerAndroid) {
+      imagePickerImplementation.useAndroidPhotoPicker = true;
+    }
+    final petsitter = context.read<UserBloc>().state;
+    ImagePicker imagePicker = ImagePicker();
+    ImagePickerAndroid imagePickerAndroid = ImagePickerAndroid();
+
+    // Show a dialog to choose between camera and gallery
+    showModalBottomSheet<void>(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(50), topRight: Radius.circular(50)),
+      ),
+      builder: (BuildContext context) {
+        return Container(
+          padding: const EdgeInsets.symmetric(vertical: 15),
+          child: Wrap(
+            direction: Axis.vertical,
+            runAlignment: WrapAlignment.center,
+            runSpacing: 0,
+            spacing: 0,
+            children: <Widget>[
+              Button(
+                label: 'Camera',
+                width: 250,
+                onTap: () async {
+                  Navigator.pop(context); // Close the dialog
+                  var status = await Permission.camera.status;
+                  PermissionStatus cameraStatus =
+                      await Permission.camera.request();
+                  PermissionStatus storageStatus =
+                      await Permission.storage.request();
+                  if (cameraStatus.isGranted && storageStatus.isGranted) {
+                    XFile? image = await imagePickerAndroid.getImageFromSource(
+                        source: ImageSource.camera);
+                    _processImage(image, petsitter.id);
+                  }
+                },
+              ),
+              SizedBox(height: 8),
+              Button(
+                label: 'Gallery',
+                width: 250,
+                onTap: () async {
+                  Navigator.pop(context); // Close the dialog
+                  XFile? image =
+                      await imagePicker.pickImage(source: ImageSource.gallery);
+                  _processImage(image, petsitter.id);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _processImage(XFile? image, int petsitterId) async {
+    if (image == null) return;
+
+    List<int> imageBytes = await image.readAsBytes();
+    service.storeImage(imageBytes, petsitterId);
+    setState(() {});
+  }
+
+  Future<List<List<byte>?>> _readImagesFromDatabase() async {
+    final petsitter = context.read<UserBloc>().state;
+    return service.getImagesSitter(petsitter.id);
   }
 }

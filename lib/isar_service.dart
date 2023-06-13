@@ -1,5 +1,6 @@
 import 'package:isar/isar.dart';
 import 'package:logger/logger.dart';
+import 'package:pet_sitting_project/entities/image_entity.dart';
 import 'package:pet_sitting_project/entities/pet.dart';
 import 'package:pet_sitting_project/entities/petsitter.dart';
 import 'package:path_provider/path_provider.dart';
@@ -62,6 +63,26 @@ class IsarService {
     return newPetsitter.id;
   }
 
+  Future<void> storeImage(List<byte> imageBytes, int id) async {
+    final image = ImageEntity()..imagebytes = imageBytes;
+    Petsitter? novo;
+    final isar = await db;
+
+    isar.writeTxn(() async => image..id = await isar.imageEntitys.put(image));
+    novo = await isar.petsitters.get(id);
+    novo!.images.add(image);
+    isar.writeTxn(() async => await novo!.images.save());
+  }
+
+  Future<List<List<byte>>> getImagesSitter(int id) async {
+    final isar = await db;
+    final images = await isar.imageEntitys
+        .filter()
+        .petsitter((q) => q.idEqualTo(id))
+        .findAll();
+    return images.map((image) => image.imagebytes).toList();
+  }
+
   Future<List<Pet>> getPetsitterPets(Petsitter petsitter) async {
     final isar = await db;
     final petlist = await isar.pets
@@ -105,7 +126,7 @@ class IsarService {
     final dir = await getApplicationDocumentsDirectory();
     if (Isar.instanceNames.isEmpty) {
       return await Isar.open(
-        [PetSchema, PetsitterSchema],
+        [PetSchema, PetsitterSchema, ImageEntitySchema],
         inspector: true,
         directory: dir.path,
       );

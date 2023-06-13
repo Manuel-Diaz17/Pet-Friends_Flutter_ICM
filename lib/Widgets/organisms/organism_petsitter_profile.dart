@@ -326,82 +326,77 @@ class OrganismPetSitterProfileState extends State<OrganismPetSitterProfile>
   }
 
   Widget get _gallery {
-    return Expanded(
-      child: SingleChildScrollView(
-        child: GridView.count(
-          primary: false,
-          padding: const EdgeInsets.all(2),
-          crossAxisSpacing: 0,
-          mainAxisSpacing: 0,
-          crossAxisCount: 3,
-          shrinkWrap: true,
-          children: [
-            GestureDetector(
-                onLongPress: () =>
-                    {_onZoom(const ImageZoom(img: "assets/images/persa.jpg"))},
-                child: ImageInProfile(image: "assets/images/persa.jpg")),
-            GestureDetector(
-                onLongPress: () => _onZoom(
-                    const ImageZoom(img: "assets/images/pastorAlemao2.jpg")),
-                child:
-                    ImageInProfile(image: "assets/images/pastorAlemao2.jpg")),
-            GestureDetector(
-                onLongPress: () => {
-                      _onZoom(const ImageZoom(
-                          img: "assets/images/pastorAlemao3.jpg"))
-                    },
-                child:
-                    ImageInProfile(image: "assets/images/pastorAlemao3.jpg")),
-            GestureDetector(
-                onLongPress: () => {
-                      _onZoom(const ImageZoom(
-                          img: "assets/images/pastorAlemao4.jpg"))
-                    },
-                child:
-                    ImageInProfile(image: "assets/images/pastorAlemao4.jpg")),
-            GestureDetector(
-                onLongPress: () =>
-                    {_onZoom(const ImageZoom(img: "assets/images/jack.jpg"))},
-                child: ImageInProfile(image: "assets/images/jack.jpg")),
-            GestureDetector(
-                onLongPress: () =>
-                    {_onZoom(const ImageZoom(img: "assets/images/jack2.jpg"))},
-                child: ImageInProfile(image: "assets/images/jack2.jpg")),
-            GestureDetector(
-                onLongPress: () => {
-                      _onZoom(const ImageZoom(img: "assets/images/dogpark.jpg"))
-                    },
-                child: ImageInProfile(image: "assets/images/dogpark.jpg")),
-            GestureDetector(
-                onLongPress: () =>
-                    {_onZoom(const ImageZoom(img: "assets/images/dogEat.jpg"))},
-                child: ImageInProfile(image: "assets/images/dogEat.jpg")),
-            GestureDetector(
-                onLongPress: () =>
-                    {_onZoom(ImageZoom(img: "assets/images/saoBernardo.jpg"))},
-                child: ImageInProfile(image: "assets/images/saoBernardo.jpg")),
-            GestureDetector(
-                onLongPress: () =>
-                    {_onZoom(ImageZoom(img: "assets/images/dogLeash.jpg"))},
-                child: ImageInProfile(image: "assets/images/dogLeash.jpg")),
-            GestureDetector(
-                onLongPress: () =>
-                    {_onZoom(ImageZoom(img: "assets/images/puppy.jpg"))},
-                child: ImageInProfile(image: "assets/images/puppy.jpg")),
-            GestureDetector(
-                onLongPress: () =>
-                    {_onZoom(ImageZoom(img: "assets/images/puppy2.jpg"))},
-                child: ImageInProfile(image: "assets/images/puppy2.jpg")),
-            GestureDetector(
-                onLongPress: () =>
-                    {_onZoom(ImageZoom(img: "assets/images/pastorAlemao.jpg"))},
-                child: ImageInProfile(image: "assets/images/pastorAlemao.jpg")),
+    return SingleChildScrollView(
+      child: GridView.count(
+        primary: false,
+        padding: const EdgeInsets.all(2),
+        crossAxisSpacing: 0,
+        mainAxisSpacing: 0,
+        crossAxisCount: 3,
+        shrinkWrap: true,
+        children: [
+          GestureDetector(
+              onLongPress: () =>
+                  {_onZoom(const ImageZoom(image: "assets/images/persa.jpg"))},
+              child: ImageInProfile(image: "assets/images/persa.jpg")),
+          GestureDetector(
+              onLongPress: () => _onZoom(
+                  const ImageZoom(image: "assets/images/pastorAlemao2.jpg")),
+              child: ImageInProfile(image: "assets/images/pastorAlemao2.jpg")),
+          GestureDetector(
+              onLongPress: () => {
+                    _onZoom(const ImageZoom(
+                        image: "assets/images/pastorAlemao3.jpg"))
+                  },
+              child: ImageInProfile(image: "assets/images/pastorAlemao3.jpg")),
+          GestureDetector(
+              onLongPress: () => {
+                    _onZoom(const ImageZoom(
+                        image: "assets/images/pastorAlemao4.jpg"))
+                  },
+              child: ImageInProfile(image: "assets/images/pastorAlemao4.jpg")),
+          GestureDetector(
+              onLongPress: () =>
+                  {_onZoom(const ImageZoom(image: "assets/images/jack.jpg"))},
+              child: ImageInProfile(image: "assets/images/jack.jpg")),
+          GestureDetector(
+              onLongPress: () =>
+                  {_onZoom(const ImageZoom(image: "assets/images/jack2.jpg"))},
+              child: ImageInProfile(image: "assets/images/jack2.jpg")),
+          GestureDetector(
+              onLongPress: () => {
+                    _onZoom(const ImageZoom(image: "assets/images/dogpark.jpg"))
+                  },
+              child: ImageInProfile(image: "assets/images/dogpark.jpg")),
+          GestureDetector(
+              onLongPress: () =>
+                  {_onZoom(const ImageZoom(image: "assets/images/dogEat.jpg"))},
+              child: ImageInProfile(image: "assets/images/dogEat.jpg")),
+          GestureDetector(
+              onLongPress: () =>
+                  {_onZoom(ImageZoom(image: "assets/images/saoBernardo.jpg"))},
+              child: ImageInProfile(image: "assets/images/saoBernardo.jpg")),
+          GestureDetector(
+              onLongPress: () =>
+                  {_onZoom(ImageZoom(image: "assets/images/dogLeash.jpg"))},
+              child: ImageInProfile(image: "assets/images/dogLeash.jpg")),
+          GestureDetector(
+              onLongPress: () =>
+                  {_onZoom(ImageZoom(image: "assets/images/puppy.jpg"))},
+              child: ImageInProfile(image: "assets/images/puppy.jpg")),
+          GestureDetector(
+              onLongPress: () =>
+                  {_onZoom(ImageZoom(image: "assets/images/puppy2.jpg"))},
+              child: ImageInProfile(image: "assets/images/puppy2.jpg")),
+          GestureDetector(
+              onLongPress: () =>
+                  {_onZoom(ImageZoom(image: "assets/images/pastorAlemao.jpg"))},
+              child: ImageInProfile(image: "assets/images/pastorAlemao.jpg")),
 
-            // Other images...
-          ],
-        ),
-      ).frosted(),
-    );
+          // Other images...
+        ],
+      ),
+    ).frosted();
   }
 
   Widget get _settingsButton {

@@ -1,4 +1,5 @@
 import 'package:isar/isar.dart';
+import 'package:pet_sitting_project/entities/image_entity.dart';
 import 'package:pet_sitting_project/entities/petsitter.dart';
 part 'pet.g.dart';
 
@@ -15,6 +16,7 @@ class Pet {
   String? serviceCode;
   int? tourTime;
   String? owner;
+  final image = IsarLink<ImageEntity>();
 
   @Backlink(to: "pet")
   final petsitter = IsarLink<Petsitter>();

@@ -1,12 +1,19 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:pet_sitting_project/Constants/constants_colors.dart';
 
 class ImageInProfile extends StatelessWidget {
-  var image;
+  final Uint8List? imageData;
+  final String image;
 
-  ImageInProfile({super.key, required this.image});
+  const ImageInProfile({
+    Key? key,
+    this.imageData,
+    required this.image,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +23,9 @@ class ImageInProfile extends StatelessWidget {
       decoration: BoxDecoration(
         border: Border.all(width: 1, color: ConstantColors.white),
         image: DecorationImage(
-          image: AssetImage(image),
+          image: imageData != null
+              ? MemoryImage(imageData!) as ImageProvider<Object>
+              : AssetImage(image),
           fit: BoxFit.cover,
         ),
       ),

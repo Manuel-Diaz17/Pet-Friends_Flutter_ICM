@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:blur/blur.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -7,10 +9,12 @@ import 'package:pet_sitting_project/Constants/constants_colors.dart';
 class ImageZoom extends StatelessWidget {
   const ImageZoom({
     super.key,
-    required this.img,
+    this.imageData,
+    required this.image,
   });
 
-  final String img;
+  final Uint8List? imageData;
+  final String image;
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +31,9 @@ class ImageZoom extends StatelessWidget {
           ), */
           borderRadius: BorderRadius.all(Radius.circular(10)),
           image: DecorationImage(
-            image: AssetImage(img),
+            image: imageData != null
+                ? MemoryImage(imageData!) as ImageProvider<Object>
+                : AssetImage(image),
             fit: BoxFit.fitWidth,
           ),
         ),

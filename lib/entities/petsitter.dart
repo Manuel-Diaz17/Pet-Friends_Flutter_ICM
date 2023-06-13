@@ -1,4 +1,6 @@
+import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
+import 'package:pet_sitting_project/entities/image_entity.dart';
 import 'package:pet_sitting_project/entities/pet.dart';
 part 'petsitter.g.dart';
 
@@ -14,6 +16,7 @@ class Petsitter {
   String? description;
   int? rating;
   final pet = IsarLinks<Pet>();
+  final images = IsarLinks<ImageEntity>();
 
   @override
   @ignore
