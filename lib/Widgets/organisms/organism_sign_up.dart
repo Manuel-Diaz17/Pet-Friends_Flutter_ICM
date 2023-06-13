@@ -247,9 +247,12 @@ class _OrganismSignUpState extends State<OrganismSignUp> {
                 Pet()
                   ..age = 10
                   ..gender = "M"
-                  ..name = "Rex"
+                  ..name = "Max"
                   ..time = 1
-                  ..species = "German Sheperd");
+                  ..species = "German Sheperd"
+                  ..serviceCode = "12345"
+                  ..owner = "John Murphy"
+                  ..location = "Aveiro");
             _changeUser(id);
           }
         },

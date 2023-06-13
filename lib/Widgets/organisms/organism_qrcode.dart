@@ -2,7 +2,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pet_sitting_project/Constants/constants_colors.dart';
+import 'package:pet_sitting_project/bloc/petBloc.dart';
 import 'package:pet_sitting_project/constants/constant_routes.dart';
 
 
@@ -16,6 +18,9 @@ class OrganismQrCode extends StatefulWidget {
 class _OrganismQrCodeState extends State<OrganismQrCode> {
 
   String ticket = '';
+
+  String petName = "";
+  String petCode = "";
 
   Future<void> showValidateDialog(String petCode, String petName) async {
     await showDialog<void>(
@@ -69,6 +74,17 @@ class _OrganismQrCodeState extends State<OrganismQrCode> {
     );
   }
 
+  @override
+  void initState() {
+    super.initState();
+
+    final pet = context
+        .read<PetBloc>()
+        .state;
+    petName = pet.name;
+    petCode = pet.serviceCode!;
+  }
+
   readQrCode() async{
     String code = await FlutterBarcodeScanner.scanBarcode("#FFFFFF", "cancel", false, ScanMode.QR);
 
@@ -77,11 +93,11 @@ class _OrganismQrCodeState extends State<OrganismQrCode> {
         // Assuming the QR code format is "PET_CODE:PET_NAME" (e.g., "12345:Max")
         List<String> qrCodeData = code.split(':');
         if (qrCodeData.length == 2) {
-          String petCode = qrCodeData[0];
-          String petName = qrCodeData[1];
+          String petCodeQr = qrCodeData[0];
+          String petNameQr = qrCodeData[1];
           // TODO: Validate the pet data against your database or predefined list
           // Example validation logic:
-          if (petCode == '12345' && petName == 'Max') {
+          if (petCodeQr == '$petCode' && petNameQr == '$petName') {
             //ticket = 'Validated: $petCode:$petName';
             showValidateDialog(petCode, petName);
             Navigator.pushNamed(context, ConstantRoutes.tour);

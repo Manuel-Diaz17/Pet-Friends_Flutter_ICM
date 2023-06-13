@@ -27,9 +27,9 @@ class _OrganismRequestsState extends State<OrganismRequests> {
     super.initState();
     final petsitter = context
         .read<UserBloc>()
-        .state; // Use context.read to access UserBloc state
+        .state;
     log.i(petsitter.toString());
-    _petsFuture = _getPets(petsitter); // Assign the Future to _petsFuture
+    _petsFuture = _getPets(petsitter);
   }
 
   @override
@@ -68,6 +68,7 @@ class _OrganismRequestsState extends State<OrganismRequests> {
               final pet = pets[index];
               return SlidableWidget(
                 molecule: MoleculeRequestBlock(id: pet.id),
+                pet: pet,
               );
             },
             childCount: pets.length,

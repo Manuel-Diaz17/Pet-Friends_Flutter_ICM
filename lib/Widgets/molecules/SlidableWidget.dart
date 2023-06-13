@@ -1,23 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:pet_sitting_project/constants/constant_routes.dart';
+import 'package:pet_sitting_project/entities/pet.dart';
+import 'package:pet_sitting_project/isar_service.dart';
 
 class SlidableWidget extends StatelessWidget {
-  const SlidableWidget({
+   SlidableWidget({
     super.key,
     required this.molecule,
+    required this.pet,
+    //required this.onDelete,
   });
 
   final Widget molecule;
   //final void Function(BuildContext) onPressed;
+  final Pet pet;
+  //final void function(Pet) onDelete;
+
+  final service = IsarService();  
 
   @override
   Widget build(BuildContext context) {
     return Slidable(
       useTextDirection: false,
       // Specify a key if the Slidable is dismissible.
-      key: const ValueKey(1),
-
+      key: ValueKey(pet.id),
       // The start action pane is the one at the left or the top side.
       endActionPane: ActionPane(
         extentRatio: 0.2,
@@ -42,7 +49,7 @@ class SlidableWidget extends StatelessWidget {
         ],
       ),
       startActionPane: ActionPane(
-        dismissible: DismissiblePane(onDismissed: () {}),
+        dismissible: DismissiblePane(onDismissed: () {service.deletePet(pet.id);}),
         extentRatio: 0.2,
         // A motion is a widget used to control how the pane animates.
         motion: ScrollMotion(),

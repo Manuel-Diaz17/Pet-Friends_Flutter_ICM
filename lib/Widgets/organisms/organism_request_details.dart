@@ -59,7 +59,7 @@ class _Details extends StatelessWidget {
                   ),
                   SizedBox(height: 10),
                   Text(
-                    'Age: ${pet.age}',
+                    '${pet.age} years',
                     style: TextStyle(fontSize: 18),
                   ),
                 ],
