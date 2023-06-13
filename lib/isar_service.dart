@@ -12,6 +12,15 @@ class IsarService {
     db = openDB();
   }
 
+  Future<void> deletePet(int id) async {
+    final isar = await db;
+
+    await isar.writeTxn(() async {
+      isar.pets.delete(id);
+      }
+    );
+  }
+
   Future<void> savePet(Pet newPet) async {
     final isar = await db;
     isar.writeTxnSync<int>(() => isar.pets.putSync(newPet));

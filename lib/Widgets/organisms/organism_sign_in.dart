@@ -41,7 +41,7 @@ class _OrganismSignInState extends State<OrganismSignIn> {
               width: 100,
               decoration: const BoxDecoration(
                   image: DecorationImage(
-                    image: AssetImage("assets/images/logo.png"),
+                    image: AssetImage("assets/images/logo_petfriends.png"),
                   ),
                   borderRadius: BorderRadius.all(Radius.circular(8))),
             ),

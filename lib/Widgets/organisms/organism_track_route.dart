@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:logger/logger.dart';
 import 'package:pet_sitting_project/Constants/constant_routes.dart';
@@ -11,6 +12,7 @@ import 'package:geocoding/geocoding.dart' as geocoding;
 import 'package:location/location.dart' as location;
 
 import 'package:pet_sitting_project/Constants/constants_colors.dart';
+import 'package:pet_sitting_project/bloc/petBloc.dart';
 
 class OrganismTrackRoute extends StatefulWidget {
   const OrganismTrackRoute({Key? key}) : super(key: key);
@@ -24,7 +26,7 @@ class _OrganismTrackRouteState extends State<OrganismTrackRoute> {
 
   location.LocationData? currentLocation;
   //static const LatLng petLocation = LatLng(40.6412, -8.65362);
-  String cityName = "Águeda"; // Update with your desired city name
+  String cityName = "Aveiro";
 
   BitmapDescriptor currentLocationIcon = BitmapDescriptor.defaultMarker;
   BitmapDescriptor petLocationIcon = BitmapDescriptor.defaultMarker;
@@ -144,6 +146,11 @@ Future<LatLng> getCoordinatesForCity(String cityName) async {
     super.initState();
     getCurrentLocation();
     setCustomMarkerIcon();
+
+    final pet = context
+        .read<PetBloc>()
+        .state;
+    cityName = pet.location!;
   }
 
     @override

@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:ffi';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:logger/logger.dart';
@@ -8,6 +10,7 @@ import 'package:pet_sitting_project/Constants/constant_routes.dart';
 import 'dart:math';
 
 import 'package:pet_sitting_project/Constants/constants_colors.dart';
+import 'package:pet_sitting_project/bloc/petBloc.dart';
 
 class OrganismTour extends StatefulWidget {
   const OrganismTour({Key? key}) : super(key: key);
@@ -29,7 +32,8 @@ class _OrganismTourState extends State<OrganismTour> {
   LatLng? previousLatLng;
 
   Timer? _timer;
-  int _secondsRemaining = 3600; // 1 hour in seconds
+  int serviceTimeHours = 0;
+  int serviceTimeSeconds = 0;
 
   void getCurrentLocation() async {
     Location location = Location();
@@ -105,12 +109,12 @@ class _OrganismTourState extends State<OrganismTour> {
     return degree * (pi / 180);
   }
 
-  void startTimer() {
+  void startTimer(int serviceTime) {
     const oneSecond = Duration(seconds: 1);
     _timer = Timer.periodic(oneSecond, (Timer timer) {
       setState(() {
-        if (_secondsRemaining > 0) {
-          _secondsRemaining--;
+        if (serviceTime > 0) {
+          serviceTime--;
         } else {
           timer.cancel();
           showSummaryDialog();
@@ -124,6 +128,10 @@ class _OrganismTourState extends State<OrganismTour> {
     final minutes = (seconds / 60).floor();
     final remainingSeconds = seconds % 60;
     return '$minutes:${remainingSeconds.toString().padLeft(2, '0')}';
+  }
+
+  int hoursToSeconds(int hours) {
+    return (hours * 3600).round();
   }
 
   Future<bool?> showConfirmationDialog() {
@@ -166,7 +174,7 @@ class _OrganismTourState extends State<OrganismTour> {
             children: [
               Text('Distance: ${totalDistance.toStringAsFixed(3)} km'),
               const SizedBox(height: 10),
-              Text('Time Remaining: ${formatTime(_secondsRemaining)}'),
+              Text('Time Remaining: ${formatTime(serviceTimeSeconds)}'),
             ],
           ),
           actions: [
@@ -187,7 +195,13 @@ class _OrganismTourState extends State<OrganismTour> {
     super.initState();
     getCurrentLocation();
     setCustomMarkerIcon();
-    startTimer();
+    
+    final pet = context
+        .read<PetBloc>()
+        .state;
+    serviceTimeHours = pet.time!;
+    serviceTimeSeconds = hoursToSeconds(serviceTimeHours);
+    startTimer(serviceTimeSeconds);
   }
 
   @override
@@ -252,7 +266,7 @@ class _OrganismTourState extends State<OrganismTour> {
                     Icon(Icons.access_time),
                     SizedBox(width: 5),
                     Text(
-                      '${formatTime(_secondsRemaining)}',
+                      '${formatTime(serviceTimeSeconds)}',
                       style: TextStyle(fontSize: 20),
                     ),
                   ],
