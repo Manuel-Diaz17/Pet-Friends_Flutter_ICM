@@ -30,11 +30,7 @@ class _OrganismSignUpState extends State<OrganismSignUp> {
   late String cc;
   final service = IsarService();
 
-  void _changeName(s) {
-    SettingsBloc bloc = BlocProvider.of<SettingsBloc>(context);
-
-    setState(() => bloc.add(ChangeName(s)));
-  }
+  late String description;
 
   void _changeUser(int id) {
     UserBloc bloc = BlocProvider.of<UserBloc>(context);
@@ -104,6 +100,7 @@ class _OrganismSignUpState extends State<OrganismSignUp> {
         _userAndPass,
         _personalInfo,
         _questionSection,
+        _description,
         _nextButton,
       ],
     );
@@ -223,6 +220,14 @@ class _OrganismSignUpState extends State<OrganismSignUp> {
     );
   }
 
+  Widget get _description {
+    return Input(
+      onValueChanged: (s) => description = s,
+      hintText: " A brief description of yourself",
+      keyboardType: TextInputType.multiline,
+    );
+  }
+
   Widget get _nextButton {
     return Container(
       alignment: Alignment.bottomRight,
@@ -234,7 +239,6 @@ class _OrganismSignUpState extends State<OrganismSignUp> {
         onTap: () async {
           if (_selectedRole == "pet_sitter") {
             Navigator.pushNamed(context, ConstantRoutes.signIn);
-            _changeName('$fName $lName');
 
             int id = await service.savePetToSitter(
                 Petsitter()
@@ -243,7 +247,8 @@ class _OrganismSignUpState extends State<OrganismSignUp> {
                   ..username = username
                   ..pass = pass
                   ..birthDate = _selectedDate!
-                  ..cc = cc,
+                  ..cc = cc
+                  ..description = description,
                 Pet()
                   ..age = 10
                   ..gender = "M"

@@ -89,7 +89,7 @@ class OrganismPetSitterProfileState extends State<OrganismPetSitterProfile>
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               _profileData,
-              profileText(
+              ProfileText(
                 text:
                     "Introducing Joshua, a devoted pet sitter with a deep passion for his four-legged companions.",
               ),

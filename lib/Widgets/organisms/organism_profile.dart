@@ -102,7 +102,7 @@ class _OrganismProfileState extends State<OrganismProfile> {
           _profileData,
           BlocBuilder<UserBloc, Petsitter>(builder: (context, sitter) {
             return Center(
-                child: profileText(
+                child: ProfileText(
               text: '${sitter.description}',
             ));
           }),
