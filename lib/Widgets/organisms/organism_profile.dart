@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:isar/isar.dart';
@@ -39,6 +40,7 @@ class _OrganismProfileState extends State<OrganismProfile> {
     height: 30,
   );
   final service = IsarService();
+  final log = Logger();
   bool _zoomed = false;
   Widget _zoomImg = Container();
   double _zoomOpa = 0;
@@ -50,7 +52,20 @@ class _OrganismProfileState extends State<OrganismProfile> {
         children: [
           _infoSection,
           _divider, //Space Container
-          _gallery,
+          StatefulBuilder(
+            builder: (context, setState) => FutureBuilder<void>(
+              future: delayFunction(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const CircularProgressIndicator();
+                } else if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                } else {
+                  return _gallery;
+                }
+              },
+            ),
+          )
         ],
       ),
     );
@@ -254,14 +269,8 @@ class _OrganismProfileState extends State<OrganismProfile> {
   }
 
   Future<void> _pickImage() async {
-    final ImagePickerPlatform imagePickerImplementation =
-        ImagePickerPlatform.instance;
-    if (imagePickerImplementation is ImagePickerAndroid) {
-      imagePickerImplementation.useAndroidPhotoPicker = true;
-    }
     final petsitter = context.read<UserBloc>().state;
     ImagePicker imagePicker = ImagePicker();
-    ImagePickerAndroid imagePickerAndroid = ImagePickerAndroid();
 
     // Show a dialog to choose between camera and gallery
     showModalBottomSheet<void>(
@@ -290,9 +299,16 @@ class _OrganismProfileState extends State<OrganismProfile> {
                   PermissionStatus storageStatus =
                       await Permission.storage.request();
                   if (cameraStatus.isGranted && storageStatus.isGranted) {
-                    XFile? image = await imagePickerAndroid.getImageFromSource(
-                        source: ImageSource.camera);
-                    _processImage(image, petsitter.id);
+                    try {
+                      XFile? image = await imagePicker.pickImage(
+                          source: ImageSource.camera,
+                          preferredCameraDevice: CameraDevice.rear);
+                      log.i('Image null saiu da camera');
+                      _processImage(image, petsitter.id);
+                    } on PlatformException catch (e) {
+                      final log = Logger();
+                      log.i('Failed to pick image from camera: $e');
+                    }
                   }
                 },
               ),
@@ -302,9 +318,13 @@ class _OrganismProfileState extends State<OrganismProfile> {
                 width: 250,
                 onTap: () async {
                   Navigator.pop(context); // Close the dialog
-                  XFile? image =
-                      await imagePicker.pickImage(source: ImageSource.gallery);
-                  _processImage(image, petsitter.id);
+                  try {
+                    XFile? image = await imagePicker.pickImage(
+                        source: ImageSource.gallery);
+                    _processImage(image, petsitter.id);
+                  } on PlatformException catch (e) {
+                    log.i('Failed to pick image from gallery: $e');
+                  }
                 },
               ),
             ],
@@ -315,15 +335,43 @@ class _OrganismProfileState extends State<OrganismProfile> {
   }
 
   void _processImage(XFile? image, int petsitterId) async {
-    if (image == null) return;
+    if (image == null) {
+      log.i('Image null');
+      return;
+    }
 
+    log.i('Processing');
     List<int> imageBytes = await image.readAsBytes();
     service.storeImage(imageBytes, petsitterId);
+
     setState(() {});
+  }
+
+  Future<void> getLostData(int id) async {
+    final ImagePicker picker = ImagePicker();
+    final LostDataResponse response = await picker.retrieveLostData();
+    if (response.isEmpty) {
+      return;
+    }
+    final List<XFile>? files = response.files;
+    if (files!.isNotEmpty) {
+      log.i(' There is lost data');
+      while (files.isNotEmpty) {
+        _processImage(files.removeLast(), id);
+      }
+    } else {
+      log.i(' Exception: ${response.exception}');
+    }
   }
 
   Future<List<List<byte>?>> _readImagesFromDatabase() async {
     final petsitter = context.read<UserBloc>().state;
+    getLostData(petsitter.id);
     return service.getImagesSitter(petsitter.id);
+  }
+
+  Future<void> delayFunction() async {
+    //'Delaying for 1 seconds...;
+    await Future.delayed(const Duration(milliseconds: 500));
   }
 }

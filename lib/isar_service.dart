@@ -18,8 +18,7 @@ class IsarService {
 
     await isar.writeTxn(() async {
       isar.pets.delete(id);
-      }
-    );
+    });
   }
 
   Future<void> savePet(Pet newPet) async {

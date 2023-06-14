@@ -31,20 +31,18 @@ class _OrganismSignUp2State extends State<OrganismSignUp2> {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: ListView(children: [
-        Container(
-          margin: const EdgeInsets.symmetric(horizontal: 26, vertical: 30),
-          child: Wrap(
-            runSpacing: 20,
-            alignment: WrapAlignment.center,
-            children: [
-              _form,
-            ],
-          ),
-        )
-      ]),
-    );
+    return ListView(children: [
+      Container(
+        margin: const EdgeInsets.symmetric(horizontal: 26, vertical: 30),
+        child: Wrap(
+          runSpacing: 20,
+          alignment: WrapAlignment.center,
+          children: [
+            _form,
+          ],
+        ),
+      )
+    ]);
   }
 
   //Widgets

@@ -17,7 +17,13 @@ class PetBloc extends Bloc<UserEvent, Pet> {
   final log = Logger();
   late Pet _currentPet;
 
-  PetBloc() : super(Pet()) {
+  PetBloc()
+      : super(Pet()
+          ..name = ''
+          ..age = 0
+          ..time = 0
+          ..species = ''
+          ..gender = '') {
     on<ChangePet>((event, emit) async {
       log.i("Change pet");
       final service = IsarService();
